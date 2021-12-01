@@ -6,8 +6,7 @@ OK, let's try another year!
 https://adventofcode.com/2021
 
 ## Setup
-Input files are expected to be located in the "inputs" folder under the correct folder for the day. See the different inputs checked-in in this repository.
-
+Input files are expected to be located in the "inputs" folder under the correct folder for the day. Example "inputs/01/test.txt"
 
 ## Running the Go solutions
 
