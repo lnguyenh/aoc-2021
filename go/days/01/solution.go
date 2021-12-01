@@ -1,54 +1,27 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
-	"strconv"
+	"go/days/01/go/filereader"
+	"go/days/01/go/utils"
 )
 
-func part1() {
-	file, _ := os.Open("input/input.txt")
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanLines)
-	var lines []string
-
-	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
-	}
-	file.Close()
+func part1(path string) {
+	values := filereader.ReadAsIntArray(path)
 
 	var lastValue = -1
 	var numBumps = 0
-	for _, line := range lines {
-		currentValue, _ := strconv.Atoi(line)
-		if lastValue > 0 && currentValue > lastValue {
+	for _, value := range values {
+		if lastValue > 0 && value > lastValue {
 			numBumps += 1
 		}
-		lastValue, _ = strconv.Atoi(line)
+		lastValue = value
 	}
 	fmt.Println(numBumps)
 }
 
-func sumArray(measurement []int) int {
-	sum := 0
-	for _, value := range measurement {
-		sum += value
-	}
-	return sum
-}
-
-func part2() {
-	file, _ := os.Open("input/input.txt")
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanLines)
-
-	var values []int
-	for scanner.Scan() {
-		value, _ := strconv.Atoi(scanner.Text())
-		values = append(values, value)
-	}
-	file.Close()
+func part2(path string) {
+	values := filereader.ReadAsIntArray(path)
 
 	numBumps := 0
 	numValues := len(values)
@@ -56,7 +29,8 @@ func part2() {
 	for i := 0; i < numValues; i++ {
 		measurement1 := values[i : i+3]
 		measurement2 := values[i+1 : i+4]
-		if len(measurement2) == len(measurement2) && sumArray(measurement2) > sumArray(measurement1) {
+		if len(measurement2) == len(measurement2) &&
+			utils.SumArray(measurement2) > utils.SumArray(measurement1) {
 			numBumps += 1
 		}
 	}
@@ -64,6 +38,7 @@ func part2() {
 }
 
 func main() {
-	part1()
-	part2()
+	inputPath := "input/input.txt"
+	part1(inputPath)
+	part2(inputPath)
 }
