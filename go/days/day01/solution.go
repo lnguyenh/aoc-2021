@@ -6,38 +6,23 @@ import (
 	"github.com/lnguyenh/aoc-2021/utils"
 )
 
-func Part1(path string) {
-	values := filereader.ReadAsIntArray(path)
-
-	var lastValue = -1
-	var numBumps = 0
-	for _, value := range values {
-		if lastValue > 0 && value > lastValue {
-			numBumps += 1
-		}
-		lastValue = value
-	}
-	fmt.Println(numBumps)
-}
-
-func Part2(path string) {
-	values := filereader.ReadAsIntArray(path)
-
-	numBumps := 0
+func countIncreases(values []int, windowSize int) int {
 	numValues := len(values)
 
+	numBumps := 0
 	for i := 0; i < numValues; i++ {
-		measurement1 := values[i : i+3]
-		measurement2 := values[i+1 : i+4]
+		measurement1 := values[i : i+windowSize]
+		measurement2 := values[i+1 : i+1+windowSize]
 		if len(measurement2) == len(measurement2) &&
 			utils.SumArray(measurement2) > utils.SumArray(measurement1) {
 			numBumps += 1
 		}
 	}
-	fmt.Println(numBumps)
+	return numBumps
 }
 
 func Run(path string) {
-	Part1(path)
-	Part2(path)
+	values := filereader.ReadAsIntArray(path)
+	fmt.Printf("Part 1 answer: %v\n", countIncreases(values, 1))
+	fmt.Printf("Part 2 answer: %v\n", countIncreases(values, 3))
 }
