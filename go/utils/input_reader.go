@@ -7,11 +7,10 @@ import (
 )
 
 func ReadFileAsIntArray(path string) []int {
+	var values []int
 	file, _ := os.Open(path)
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
-
-	var values []int
 	for scanner.Scan() {
 		value, _ := strconv.Atoi(scanner.Text())
 		values = append(values, value)
