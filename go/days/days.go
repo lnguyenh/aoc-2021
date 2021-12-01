@@ -9,11 +9,11 @@ import (
 type dayFunctionType func(string)
 
 func Run(day string, path string) {
-	functions := map[string]dayFunctionType{
+	dayFunctions := map[string]dayFunctionType{
 		"01": day01.Run,
 		"02": day02.Run,
 	}
-	dayFunction, found := functions[day]
+	dayFunction, found := dayFunctions[day]
 	if found {
 		dayFunction(path)
 	} else {

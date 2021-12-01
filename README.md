@@ -16,3 +16,8 @@ In order to get the solution for day 01 and for the input file  "inputs/01/input
 cd go
 go run cmd/aoc.go 01 input.txt
 ```
+
+## Adding a new Go solution
+- Create a new input folder with empty files
+- Create a new "day" folder
+- Add a key/value pair in the dayFunctions map in "days.go"
