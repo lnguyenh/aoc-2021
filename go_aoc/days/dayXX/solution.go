@@ -2,7 +2,7 @@ package dayXX
 
 import (
 	"fmt"
-	"go_aoc/filereader"
+	"github.com/lnguyenh/aoc-2021/filereader"
 )
 
 func Part1(path string) {

@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"go_aoc/days/day01"
-	"go_aoc/days/dayXX"
+	"github.com/lnguyenh/aoc-2021/days/day01"
+	"github.com/lnguyenh/aoc-2021/days/dayXX"
 	"os"
 )
 
@@ -13,7 +13,7 @@ func main() {
 	day := args[0]
 	input := args[1]
 
-	inputPath := fmt.Sprintf("inputs/%s/%s", day, input)
+	inputPath := fmt.Sprintf("../inputs/%s/%s", day, input)
 
 	fmt.Printf("Running AOC for day %s with input %s\n", day, inputPath)
 

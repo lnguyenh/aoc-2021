@@ -2,8 +2,8 @@ package day01
 
 import (
 	"fmt"
-	"go_aoc/filereader"
-	"go_aoc/utils"
+	"github.com/lnguyenh/aoc-2021/filereader"
+	"github.com/lnguyenh/aoc-2021/utils"
 )
 
 func Part1(path string) {
