@@ -1,4 +1,4 @@
-package main
+package day01
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"go/days/01/go/utils"
 )
 
-func part1(path string) {
+func Part1(path string) {
 	values := filereader.ReadAsIntArray(path)
 
 	var lastValue = -1
@@ -20,7 +20,7 @@ func part1(path string) {
 	fmt.Println(numBumps)
 }
 
-func part2(path string) {
+func Part2(path string) {
 	values := filereader.ReadAsIntArray(path)
 
 	numBumps := 0
@@ -37,8 +37,7 @@ func part2(path string) {
 	fmt.Println(numBumps)
 }
 
-func main() {
-	inputPath := "input/input.txt"
-	part1(inputPath)
-	part2(inputPath)
+func Run(path string) {
+	Part1(path)
+	Part2(path)
 }
