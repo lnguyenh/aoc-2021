@@ -13,6 +13,6 @@ Input files are expected to be located in the "inputs" folder under the correct 
 In order to get the solution for day 01 and for the inout file  "inputs/01/input.txt", run the following:
 
 ```
-cd go_aoc
+cd go
 go run cmd/aoc.go 01 input.txt
 ```
