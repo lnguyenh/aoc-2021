@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/lnguyenh/aoc-2021/days/day01"
+	"github.com/lnguyenh/aoc-2021/days/day02"
 	"os"
 )
 
@@ -18,6 +19,8 @@ func main() {
 	switch day {
 	case "01":
 		day01.Run(inputPath)
+	case "02":
+		day02.Run(inputPath)
 	default:
 		fmt.Printf("Cannot find a solution for day %s\n", day)
 	}
