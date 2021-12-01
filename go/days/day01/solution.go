@@ -2,7 +2,6 @@ package day01
 
 import (
 	"fmt"
-	"github.com/lnguyenh/aoc-2021/filereader"
 	"github.com/lnguyenh/aoc-2021/utils"
 )
 
@@ -20,7 +19,9 @@ func countIncreases(values []int, windowSize int) int {
 }
 
 func Run(path string) {
-	values := filereader.ReadAsIntArray(path)
-	fmt.Printf("Part 1 answer: %v\n", countIncreases(values, 1))
-	fmt.Printf("Part 2 answer: %v\n", countIncreases(values, 3))
+	values := utils.ReadFileAsIntArray(path)
+	answer1 := countIncreases(values, 1)
+	answer2 := countIncreases(values, 3)
+	fmt.Printf("Part 1 answer: %v\n", answer1)
+	fmt.Printf("Part 2 answer: %v\n", answer2)
 }
