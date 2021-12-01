@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"go/days/01/go/days/day01"
+	"go_aoc/days/day01"
+	"go_aoc/days/dayXX"
 	"os"
 )
 
@@ -17,6 +18,8 @@ func main() {
 	fmt.Printf("Running AOC for day %s with input %s\n", day, inputPath)
 
 	switch day {
+	case "XX":
+		dayXX.Run(inputPath)
 	case "01":
 		day01.Run(inputPath)
 	default:

@@ -2,8 +2,8 @@ package day01
 
 import (
 	"fmt"
-	"go/days/01/go/filereader"
-	"go/days/01/go/utils"
+	"go_aoc/filereader"
+	"go_aoc/utils"
 )
 
 func Part1(path string) {

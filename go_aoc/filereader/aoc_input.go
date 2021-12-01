@@ -16,7 +16,7 @@ func ReadAsIntArray(path string) []int {
 		value, _ := strconv.Atoi(scanner.Text())
 		values = append(values, value)
 	}
-	file.Close()
+	_ = file.Close()
 	return values
 }
 
@@ -29,6 +29,6 @@ func ReadAsStringArray(path string) []string {
 	for scanner.Scan() {
 		values = append(values, scanner.Text())
 	}
-	file.Close()
+	_ = file.Close()
 	return values
 }
