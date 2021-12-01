@@ -10,7 +10,7 @@ Input files are expected to be located in the "inputs" folder under the correct 
 
 ## Running the Go solutions
 
-In order to get the solution for day 01 and for the inout file  "inputs/01/input.txt", run the following:
+In order to get the solution for day 01 and for the input file  "inputs/01/input.txt", run the following:
 
 ```
 cd go

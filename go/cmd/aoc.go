@@ -15,7 +15,7 @@ func main() {
 
 	inputPath := fmt.Sprintf("../inputs/%s/%s", day, input)
 
-	fmt.Printf("Running AOC for day %s with input %s\n", day, inputPath)
+	fmt.Printf("Running AOC for day %s with input '%s'\n", day, inputPath)
 
 	switch day {
 	case "XX":
@@ -23,7 +23,7 @@ func main() {
 	case "01":
 		day01.Run(inputPath)
 	default:
-		fmt.Printf("Cannot find a solution for day %s", day)
+		fmt.Printf("Cannot find a solution for day %s\n", day)
 	}
 
 }
