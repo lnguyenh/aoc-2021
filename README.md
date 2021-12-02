@@ -14,7 +14,10 @@ In order to get the solution for day 01 and for the input file  "inputs/01/input
 
 ```
 cd go
-go run cmd/aoc.go 01 input
+go run cmd/aoc.go input 01
+
+# Alternatively, to solve today's problem with the corresponding input.txt:
+go run cmd/aoc.go input
 ```
 
 ## Adding a new Go solution
