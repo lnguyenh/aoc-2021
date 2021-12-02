@@ -8,31 +8,31 @@ import (
 
 func applyOneInstruction(start []int, instruction []string) []int {
 	moveValue, _ := strconv.Atoi(instruction[1])
-	var stop []int
+	var newPosition []int
 	switch instruction[0] {
 	case "forward":
-		stop = []int{start[0] + moveValue, start[1]}
+		newPosition = []int{start[0] + moveValue, start[1]}
 	case "down":
-		stop = []int{start[0], start[1] + moveValue}
+		newPosition = []int{start[0], start[1] + moveValue}
 	case "up":
-		stop = []int{start[0], start[1] - moveValue}
+		newPosition = []int{start[0], start[1] - moveValue}
 	}
-	return stop
+	return newPosition
 }
 
 func applyOneAimInstruction(start []int, aim int, instruction []string) ([]int, int) {
 	changeValue, _ := strconv.Atoi(instruction[1])
-	var stop = start
+	var newPosition = start
 	var newAim = aim
 	switch instruction[0] {
 	case "forward":
-		stop = []int{start[0] + changeValue, start[1] + changeValue*aim}
+		newPosition = []int{start[0] + changeValue, start[1] + changeValue*aim}
 	case "down":
 		newAim += changeValue
 	case "up":
 		newAim -= changeValue
 	}
-	return stop, newAim
+	return newPosition, newAim
 }
 
 func doPart1(instructions [][]string) int {
