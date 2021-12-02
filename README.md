@@ -6,7 +6,7 @@ OK, let's try another year!
 https://adventofcode.com/2021
 
 ## Setup
-Input files are expected to be located in the "inputs" folder under the correct folder for the day. Example "inputs/01/test.txt"
+Input files are expected to be located in the "inputs" folder under the correct folder for the day, and to have the extension ".txt". Example "inputs/01/test.txt"
 
 ## Running the Go solutions
 
@@ -14,7 +14,7 @@ In order to get the solution for day 01 and for the input file  "inputs/01/input
 
 ```
 cd go
-go run cmd/aoc.go 01 input.txt
+go run cmd/aoc.go 01 input
 ```
 
 ## Adding a new Go solution
