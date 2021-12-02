@@ -13,17 +13,17 @@ func applyOneInstruction(start []int, instruction []string) []int {
 	case "forward":
 		stop = []int{start[0] + moveValue, start[1]}
 	case "down":
-		stop = []int{start[0], start[1] - moveValue}
-	case "up":
 		stop = []int{start[0], start[1] + moveValue}
+	case "up":
+		stop = []int{start[0], start[1] - moveValue}
 	}
 	return stop
 }
 
 func applyOneAimInstruction(start []int, aim int, instruction []string) ([]int, int) {
 	changeValue, _ := strconv.Atoi(instruction[1])
-	var stop []int = start
-	var newAim int = aim
+	var stop = start
+	var newAim = aim
 	switch instruction[0] {
 	case "forward":
 		stop = []int{start[0] + changeValue, start[1] + changeValue*aim}
@@ -40,7 +40,7 @@ func doPart1(instructions [][]string) int {
 	for _, instruction := range instructions {
 		position = applyOneInstruction(position, instruction)
 	}
-	result := position[0] * -position[1]
+	result := position[0] * position[1]
 	return result
 }
 
