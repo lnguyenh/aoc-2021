@@ -21,6 +21,8 @@ go run cmd/aoc.go input
 ```
 
 ## Adding a new Go solution
-- Create a new input folder with empty files
-- Create a new "day" folder
-- Add a key/value pair in the dayFunctions map in "days.go"
+- Create a new input directory in the `inputs` directory, typically with a `test.txt` and a `input.txt` file as provided on https://adventofcode.com/
+- Create a new directory in the `go/days` directory, using a previous day as a template
+- Add a key/value pair in the `dayFunctions` map in the file `go/days/days.go`
+
+Voila, start coding in `go/days/[your new day]/solution.go`!
