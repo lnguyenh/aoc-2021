@@ -6,27 +6,27 @@ import (
 	"strconv"
 )
 
-func applyOneInstruction(start []int, instruction []string) []int {
+func applyOneInstruction(position []int, instruction []string) []int {
 	moveValue, _ := strconv.Atoi(instruction[1])
 	var newPosition []int
 	switch instruction[0] {
 	case "forward":
-		newPosition = []int{start[0] + moveValue, start[1]}
+		newPosition = []int{position[0] + moveValue, position[1]}
 	case "down":
-		newPosition = []int{start[0], start[1] + moveValue}
+		newPosition = []int{position[0], position[1] + moveValue}
 	case "up":
-		newPosition = []int{start[0], start[1] - moveValue}
+		newPosition = []int{position[0], position[1] - moveValue}
 	}
 	return newPosition
 }
 
-func applyOneAimInstruction(start []int, aim int, instruction []string) ([]int, int) {
+func applyOneAimInstruction(position []int, aim int, instruction []string) ([]int, int) {
 	changeValue, _ := strconv.Atoi(instruction[1])
-	var newPosition = start
+	var newPosition = position
 	var newAim = aim
 	switch instruction[0] {
 	case "forward":
-		newPosition = []int{start[0] + changeValue, start[1] + changeValue*aim}
+		newPosition = []int{position[0] + changeValue, position[1] + changeValue*aim}
 	case "down":
 		newAim += changeValue
 	case "up":
