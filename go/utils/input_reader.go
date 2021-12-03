@@ -20,13 +20,13 @@ func ReadFileAsIntArray(path string) []int {
 	return values
 }
 
-func ReadFileAsArrayOfStringArrays(path string) [][]string {
+func ReadFileAsArrayOfStringArrays(path string, delimiter string) [][]string {
 	var values [][]string
 	file, _ := os.Open(path)
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 	for scanner.Scan() {
-		values = append(values, strings.Split(scanner.Text(), " "))
+		values = append(values, strings.Split(scanner.Text(), delimiter))
 	}
 	_ = file.Close()
 	return values

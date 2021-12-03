@@ -55,7 +55,7 @@ func doPart2(instructions [][]string) int {
 }
 
 func Run(path string) {
-	values := utils.ReadFileAsArrayOfStringArrays(path)
+	values := utils.ReadFileAsArrayOfStringArrays(path, " ")
 	answer1 := doPart1(values)
 	answer2 := doPart2(values)
 	fmt.Printf("Part 1 answer: %v\n", answer1)
