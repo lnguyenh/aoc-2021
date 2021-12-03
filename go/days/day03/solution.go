@@ -70,17 +70,17 @@ func doPart1(report [][]rune) int {
 			epsilon = append(epsilon, '1')
 		}
 	}
-	gammaNumber := utils.ConvertBinaryStringToInt(string(gamma))
-	epsilonNumber := utils.ConvertBinaryStringToInt(string(epsilon))
-	return gammaNumber * epsilonNumber
+	gammaAsInt := utils.ConvertBinaryStringToInt(string(gamma))
+	epsilonAsInt := utils.ConvertBinaryStringToInt(string(epsilon))
+	return gammaAsInt * epsilonAsInt
 }
 
 func doPart2(report [][]rune) int {
 	oxygen := getOxygen(report)
 	co2 := getCo2(report)
-	oxygenNumber := utils.ConvertBinaryStringToInt(oxygen)
-	co2Number := utils.ConvertBinaryStringToInt(co2)
-	return oxygenNumber * co2Number
+	oxygenAsInt := utils.ConvertBinaryStringToInt(oxygen)
+	co2AsInt := utils.ConvertBinaryStringToInt(co2)
+	return oxygenAsInt * co2AsInt
 }
 
 func Run(path string) {
