@@ -16,7 +16,7 @@ func doPart2(values []int) int {
 }
 
 func Run(path string) {
-	values := utils.ReadFileAsIntArray(path)
+	values := utils.ReadFileAsIntSlice(path)
 	answer1 := doPart1(values)
 	answer2 := doPart2(values)
 	fmt.Printf("Part 1 answer: %v\n", answer1)

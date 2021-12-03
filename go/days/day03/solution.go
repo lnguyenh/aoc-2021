@@ -3,36 +3,35 @@ package day03
 import (
 	"fmt"
 	"github.com/lnguyenh/aoc-2021/utils"
-	"strings"
 )
 
-func getMostCommonInColumn(report [][]string, column int) string {
+func getMostCommonInColumn(report [][]rune, column int) rune {
 	var numOnes, numZeroes int
 	for _, value := range report {
-		if value[column] == "0" {
+		if value[column] == '0' {
 			numZeroes += 1
 		} else {
 			numOnes += 1
 		}
 	}
 
-	mostCommon := "0"
+	mostCommon := '0'
 	if numOnes >= numZeroes {
-		mostCommon = "1"
+		mostCommon = '1'
 	}
 	return mostCommon
 }
 
-func getLeastCommonInColumn(report [][]string, column int) string {
-	leastCommon := "0"
-	if getMostCommonInColumn(report, column) == "0" {
-		leastCommon = "1"
+func getLeastCommonInColumn(report [][]rune, column int) rune {
+	leastCommon := '0'
+	if getMostCommonInColumn(report, column) == '0' {
+		leastCommon = '1'
 	}
 	return leastCommon
 }
 
-func reduceReport(report [][]string, bitCriteria string, column int) [][]string {
-	var reducedReport [][]string
+func reduceReport(report [][]rune, bitCriteria rune, column int) [][]rune {
+	var reducedReport [][]rune
 	for _, value := range report {
 		if value[column] == bitCriteria {
 			reducedReport = append(reducedReport, value)
@@ -41,30 +40,30 @@ func reduceReport(report [][]string, bitCriteria string, column int) [][]string 
 	return reducedReport
 }
 
-func getOxygen(report [][]string) string {
+func getOxygen(report [][]rune) string {
 	reducedReport := report
 	column := 0
 	for ok := true; ok; ok = len(reducedReport) > 1 {
 		reducedReport = reduceReport(reducedReport, getMostCommonInColumn(reducedReport, column), column)
 		column += 1
 	}
-	return strings.Join(reducedReport[0], "")
+	return string(reducedReport[0])
 }
 
-func getCo2(report [][]string) string {
+func getCo2(report [][]rune) string {
 	reducedReport := report
 	column := 0
 	for ok := true; ok; ok = len(reducedReport) > 1 {
 		reducedReport = reduceReport(reducedReport, getLeastCommonInColumn(reducedReport, column), column)
 		column += 1
 	}
-	return strings.Join(reducedReport[0], "")
+	return string(reducedReport[0])
 }
 
-func doPart1(report [][]string) int {
+func doPart1(report [][]rune) int {
 	var gamma, epsilon []rune
 	for column := range report[0] {
-		if getMostCommonInColumn(report, column) == "1" {
+		if getMostCommonInColumn(report, column) == '1' {
 			gamma = append(gamma, '1')
 			epsilon = append(epsilon, '0')
 		} else {
@@ -77,7 +76,7 @@ func doPart1(report [][]string) int {
 	return gammaNumber * epsilonNumber
 }
 
-func doPart2(report [][]string) int {
+func doPart2(report [][]rune) int {
 	oxygen := getOxygen(report)
 	co2 := getCo2(report)
 	oxygenNumber := utils.ConvertBinaryStringToInt(oxygen)
@@ -86,7 +85,7 @@ func doPart2(report [][]string) int {
 }
 
 func Run(path string) {
-	report := utils.ReadFileAsArrayOfStringArrays(path, "")
+	report := utils.ReadFileAsSliceOfRuneSlices(path)
 	answer1 := doPart1(report)
 	answer2 := doPart2(report)
 	fmt.Printf("Part 1 answer: %v\n", answer1)

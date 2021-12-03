@@ -19,7 +19,7 @@ func countIncreases(values []int, windowSize int) int {
 }
 
 func Run(path string) {
-	values := utils.ReadFileAsIntArray(path)
+	values := utils.ReadFileAsIntSlice(path)
 	answer1 := countIncreases(values, 1)
 	answer2 := countIncreases(values, 3)
 	fmt.Printf("Part 1 answer: %v\n", answer1)
