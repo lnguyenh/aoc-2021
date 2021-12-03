@@ -14,7 +14,6 @@ func getMostCommonInColumn(report [][]rune, column int) rune {
 			numOnes += 1
 		}
 	}
-
 	mostCommon := '0'
 	if numOnes >= numZeroes {
 		mostCommon = '1'
