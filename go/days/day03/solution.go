@@ -31,23 +31,6 @@ func getLeastCommonInColumn(report [][]string, column int) string {
 	return leastCommon
 }
 
-func doPart1(report [][]string) int {
-	var gamma, epsilon []rune
-	var gammaNumber, epsilonNumber int
-	for column := range report[0] {
-		if getMostCommonInColumn(report, column) == "1" {
-			gamma = append(gamma, '1')
-			epsilon = append(epsilon, '0')
-		} else {
-			gamma = append(gamma, '0')
-			epsilon = append(epsilon, '1')
-		}
-	}
-	gammaNumber = utils.ConvertBinaryStringToInt(string(gamma))
-	epsilonNumber = utils.ConvertBinaryStringToInt(string(epsilon))
-	return gammaNumber * epsilonNumber
-}
-
 func reduceReport(report [][]string, bitCriteria string, column int) [][]string {
 	var reducedReport [][]string
 	for _, value := range report {
@@ -76,6 +59,23 @@ func getCo2(report [][]string) string {
 		column += 1
 	}
 	return strings.Join(reducedReport[0], "")
+}
+
+func doPart1(report [][]string) int {
+	var gamma, epsilon []rune
+	var gammaNumber, epsilonNumber int
+	for column := range report[0] {
+		if getMostCommonInColumn(report, column) == "1" {
+			gamma = append(gamma, '1')
+			epsilon = append(epsilon, '0')
+		} else {
+			gamma = append(gamma, '0')
+			epsilon = append(epsilon, '1')
+		}
+	}
+	gammaNumber = utils.ConvertBinaryStringToInt(string(gamma))
+	epsilonNumber = utils.ConvertBinaryStringToInt(string(epsilon))
+	return gammaNumber * epsilonNumber
 }
 
 func doPart2(report [][]string) int {
