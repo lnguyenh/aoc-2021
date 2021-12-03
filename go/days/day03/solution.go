@@ -63,7 +63,6 @@ func getCo2(report [][]string) string {
 
 func doPart1(report [][]string) int {
 	var gamma, epsilon []rune
-	var gammaNumber, epsilonNumber int
 	for column := range report[0] {
 		if getMostCommonInColumn(report, column) == "1" {
 			gamma = append(gamma, '1')
@@ -73,8 +72,8 @@ func doPart1(report [][]string) int {
 			epsilon = append(epsilon, '1')
 		}
 	}
-	gammaNumber = utils.ConvertBinaryStringToInt(string(gamma))
-	epsilonNumber = utils.ConvertBinaryStringToInt(string(epsilon))
+	gammaNumber := utils.ConvertBinaryStringToInt(string(gamma))
+	epsilonNumber := utils.ConvertBinaryStringToInt(string(epsilon))
 	return gammaNumber * epsilonNumber
 }
 

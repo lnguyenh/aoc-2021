@@ -6,11 +6,14 @@ import (
 	"github.com/lnguyenh/aoc-2021/days/day02"
 	"github.com/lnguyenh/aoc-2021/days/day03"
 	"github.com/lnguyenh/aoc-2021/days/day04"
+	"time"
 )
 
 type dayFunctionType func(string)
 
 func Run(day string, path string) {
+	startTime := time.Now()
+
 	dayFunctions := map[string]dayFunctionType{
 		"01": day01.Run,
 		"02": day02.Run,
@@ -23,5 +26,7 @@ func Run(day string, path string) {
 	} else {
 		fmt.Printf("No code ready for day %s\n", day)
 	}
+
+	fmt.Println(time.Since(startTime))
 	return
 }
