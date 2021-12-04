@@ -111,7 +111,6 @@ func doPart2(draw []int, grids []bingoGrid) int {
 			}
 		}
 	}
-
 	return results[len(results)-1]
 }
 
