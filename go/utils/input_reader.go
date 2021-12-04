@@ -20,6 +20,22 @@ func ReadFileAsIntSlice(path string) []int {
 	return values
 }
 
+func ReadFileAsString(path string) string {
+	var lines []string
+	file, _ := os.Open(path)
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+	_ = file.Close()
+	return strings.Join(lines, "\n")
+}
+
+func ReadFileAsStringSlice(path string, delimiter string) []string {
+	return strings.Split(ReadFileAsString(path), delimiter)
+}
+
 func ReadFileAsSliceOfStringSlices(path string, delimiter string) [][]string {
 	var values [][]string
 	file, _ := os.Open(path)
