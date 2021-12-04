@@ -98,20 +98,34 @@ Loop:
 	return winningNumber * winningScore
 }
 
-func doPart2() int {
-	return 0
+func doPart2(draw []int, grids []bingoGrid) int {
+	var results []int
+	for _, number := range draw {
+		for _, grid := range grids {
+			if grid.isWinning() {
+				continue
+			}
+			grid.applyNumber(number)
+			if grid.isWinning() {
+				results = append(results, grid.getScore()*number)
+			}
+		}
+	}
+
+	return results[len(results)-1]
 }
 
 func Run(path string) {
 	input := utils.ReadFileAsStringSlice(path, "\n\n")
 	draw := utils.ParseStringAsIntList(input[0], ",")
-	var grids []bingoGrid
+	var gridsPart1, gridsPart2 []bingoGrid
 	for _, gridBlob := range input[1:] {
-		grids = append(grids, createGrid(gridBlob))
+		gridsPart1 = append(gridsPart1, createGrid(gridBlob))
+		gridsPart2 = append(gridsPart2, createGrid(gridBlob))
 	}
 
-	answer1 := doPart1(draw, grids)
-	answer2 := doPart2()
+	answer1 := doPart1(draw, gridsPart1)
+	answer2 := doPart2(draw, gridsPart2)
 	fmt.Printf("Part 1 answer: %v\n", answer1)
 	fmt.Printf("Part 2 answer: %v\n", answer2)
 }
