@@ -7,8 +7,10 @@ import (
 )
 
 type bingoGrid struct {
-	values [][]int
-	status [][]bool
+	values    [][]int
+	status    [][]bool
+	rank      int
+	winNumber int
 }
 
 func createGrid(blob string) bingoGrid {
@@ -82,49 +84,62 @@ func (grid bingoGrid) getScore() int {
 	return score
 }
 
-func doPart1(draw []int, grids []bingoGrid) int {
-	var winningScore, winningNumber int
-Loop:
-	for _, number := range draw {
-		for _, grid := range grids {
-			grid.applyNumber(number)
-			if grid.isWinning() {
-				winningScore = grid.getScore()
-				winningNumber = number
-				break Loop
-			}
-		}
+func createGrids(gridBlobs []string) []bingoGrid {
+	var grids []bingoGrid
+	for _, gridBlob := range gridBlobs {
+		grids = append(grids, createGrid(gridBlob))
 	}
-	return winningNumber * winningScore
+	return grids
 }
 
-func doPart2(draw []int, grids []bingoGrid) int {
-	var results []int
+func runGame(draw []int, grids []bingoGrid) {
+	rankCounter := 1
+	numGrids := len(grids)
 	for _, number := range draw {
-		for _, grid := range grids {
-			if grid.isWinning() {
+		for i := 0; i < numGrids; i++ {
+			grid := &grids[i]
+			if grid.rank > 0 {
 				continue
 			}
 			grid.applyNumber(number)
 			if grid.isWinning() {
-				results = append(results, grid.getScore()*number)
+				grid.rank = rankCounter
+				grid.winNumber = number
+				rankCounter++
 			}
 		}
 	}
-	return results[len(results)-1]
+}
+
+func doPart1(grids []bingoGrid) int {
+	for _, grid := range grids {
+		if grid.rank == 1 {
+			return grid.getScore() * grid.winNumber
+		}
+	}
+	return 0
+}
+
+func doPart2(grids []bingoGrid) int {
+	lastRank := len(grids)
+	for _, grid := range grids {
+		if grid.rank == lastRank {
+			return grid.getScore() * grid.winNumber
+		}
+	}
+	return 0
 }
 
 func Run(path string) {
 	input := utils.ReadFileAsStringSlice(path, "\n\n")
-	draw := utils.ParseStringAsIntList(input[0], ",")
-	var gridsPart1, gridsPart2 []bingoGrid
-	for _, gridBlob := range input[1:] {
-		gridsPart1 = append(gridsPart1, createGrid(gridBlob))
-		gridsPart2 = append(gridsPart2, createGrid(gridBlob))
-	}
 
-	answer1 := doPart1(draw, gridsPart1)
-	answer2 := doPart2(draw, gridsPart2)
+	draw := utils.ParseStringAsIntList(input[0], ",")
+	grids := createGrids(input[1:])
+
+	runGame(draw, grids)
+
+	answer1 := doPart1(grids)
+	answer2 := doPart2(grids)
 	fmt.Printf("Part 1 answer: %v\n", answer1)
 	fmt.Printf("Part 2 answer: %v\n", answer2)
 }
