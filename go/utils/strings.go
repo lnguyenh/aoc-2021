@@ -15,3 +15,8 @@ func ParseStringAsIntList(blob string, delimiter string) []int {
 	}
 	return output
 }
+
+func ConvertBinaryStringToInt(text string) int {
+	number, _ := strconv.ParseInt(text, 2, 64)
+	return int(number)
+}

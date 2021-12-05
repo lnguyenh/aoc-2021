@@ -11,7 +11,7 @@ func countIncreases(values []int, windowSize int) int {
 	for i := 0; i < numValues-windowSize; i++ {
 		measurement1 := values[i : i+windowSize]
 		measurement2 := values[i+1 : i+1+windowSize]
-		if utils.SumArray(measurement2) > utils.SumArray(measurement1) {
+		if utils.SumSlice(measurement2) > utils.SumSlice(measurement1) {
 			numBumps += 1
 		}
 	}
