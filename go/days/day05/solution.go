@@ -16,13 +16,35 @@ type ventVector struct {
 
 func (vector ventVector) getPoints(useDiagonal bool) [][]int {
 	var points [][]int
+	var originalPoint = []int{vector.x1, vector.y1}
+	var x, y int
 	if vector.x1 != vector.x2 && vector.y1 != vector.y2 {
+		if useDiagonal {
+			points = append(points, originalPoint)
+			x = vector.x1
+			y = vector.y1
+			for {
+				if x == vector.x2 && y == vector.y2 {
+					break
+				}
+				if x < vector.x2 {
+					x = x + 1
+				} else if x > vector.x2 {
+					x = x - 1
+				}
+				if y < vector.y2 {
+					y = y + 1
+				} else if y > vector.y2 {
+					y = y - 1
+				}
+				var newPoint = []int{x, y}
+				points = append(points, newPoint)
+			}
+		}
 	} else {
-		var x, y int
+		points = append(points, originalPoint)
 		x = vector.x1
 		y = vector.y1
-		var originalPoint = []int{x, y}
-		points = append(points, originalPoint)
 		for {
 			if x == vector.x2 && y == vector.y2 {
 				break
@@ -81,11 +103,9 @@ func createGrid(I, J int) [][]int {
 
 func applyVector(vector ventVector, grid [][]int, useDiagonal bool) {
 	points := vector.getPoints(useDiagonal)
-	for i := range points {
-		grid[points[i][1]][points[i][0]] = grid[points[i][1]][points[i][0]] + 1
+	for _, point := range points {
+		grid[point[1]][point[0]] += 1
 	}
-	printGrid(grid, 10, 10)
-	fmt.Println("-")
 }
 
 func countOverlaps(grid [][]int) int {
@@ -119,7 +139,6 @@ func doPart2(vectors []ventVector) int {
 	for _, v := range vectors {
 		applyVector(v, grid, true)
 	}
-	printGrid(grid, 10, 10)
 	return countOverlaps(grid)
 }
 
@@ -127,7 +146,6 @@ func Run(path string) {
 	input := utils.ReadFileAsStringSlice(path, "\n")
 	vectors := createVectors(input)
 
-	fmt.Printf("input: %v\n", vectors)
 	answer1 := doPart1(vectors)
 	answer2 := doPart2(vectors)
 	fmt.Printf("Part 1 answer: %v\n", answer1)
