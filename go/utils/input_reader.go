@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// ReadFileAsIntSlice is a function to use If the file has one int per line
 func ReadFileAsIntSlice(path string) []int {
 	var values []int
 	file, _ := os.Open(path)
@@ -20,6 +21,7 @@ func ReadFileAsIntSlice(path string) []int {
 	return values
 }
 
+// ReadFileAsString is a function that reads a whole file as one string
 func ReadFileAsString(path string) string {
 	var lines []string
 	file, _ := os.Open(path)

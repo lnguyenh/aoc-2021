@@ -59,7 +59,7 @@ func doPart2(initialDay []int) int {
 }
 
 func Run(path string) {
-	input := utils.ParseStringAsIntList(utils.ReadFileAsStringSlice(path, "\n")[0], ",")
+	input := utils.ParseStringAsIntList(utils.ReadFileAsString(path), ",")
 	answer1 := doPart1(input)
 	answer2 := doPart2(input)
 	fmt.Printf("Part 1 answer: %v\n", answer1)
