@@ -1,5 +1,11 @@
 package utils
 
+import "sort"
+
+//
+// Int
+//
+
 func SumSlice(measurement []int) int {
 	sum := 0
 	for _, value := range measurement {
@@ -35,4 +41,38 @@ func IntSliceToSet(list []int) []int {
 		}
 	}
 	return set
+}
+
+//
+// Runes
+//
+
+func RuneInSlice(a rune, list []rune) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
+}
+
+func SortRuneSlice(runeSlice []rune) []rune {
+	r := runeSlice[:]
+	sort.Slice(r, func(i, j int) bool {
+		return r[i] < r[j]
+	})
+	return r
+}
+
+//
+// Strings
+//
+
+func StringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
 }
