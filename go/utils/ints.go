@@ -6,3 +6,12 @@ func IntAbs(a int) int {
 	}
 	return a
 }
+
+func IntIn(value int, list []int) bool {
+	for _, okValue := range list {
+		if value == okValue {
+			return true
+		}
+	}
+	return false
+}
