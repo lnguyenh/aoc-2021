@@ -134,6 +134,7 @@ func doPart2(input [][][][]rune) int {
 			translationTable := generateTranslationTable(combination)
 			if isValid(translationTable, entry[0]) {
 				counter += applyCombination(translationTable, entry[1])
+				break
 			}
 		}
 
