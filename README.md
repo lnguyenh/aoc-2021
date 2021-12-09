@@ -20,6 +20,9 @@ go run cmd/aoc.go input 01
 go run cmd/aoc.go input
 ```
 
+## Understanding the solutions
+A good starting point is to check first the `doPart1()` or `doPart2()` functions for each day and follow the code from there.
+
 ## Adding a new Go solution
 - Create a new input directory in the `inputs` directory, typically with a `test.txt` and a `input.txt` file as provided on https://adventofcode.com/
 - Create a new directory in the `go/days` directory, using a previous day as a template

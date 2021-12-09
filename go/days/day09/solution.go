@@ -40,14 +40,6 @@ func getLowPoints(grid [][]int) []lowPoint {
 	return lowPoints
 }
 
-func doPart1(grid [][]int) int {
-	riskLevel := 0
-	for _, point := range getLowPoints(grid) {
-		riskLevel += point.risk
-	}
-	return riskLevel
-}
-
 func getEmptyGrid(grid [][]int) [][]int {
 	length, width := len(grid), len(grid[0])
 	emptyGrid := make([][]int, length)
@@ -97,6 +89,14 @@ func expand(workGrid [][]int, basinSizes []int) int {
 		}
 	}
 	return numExpansions
+}
+
+func doPart1(grid [][]int) int {
+	riskLevel := 0
+	for _, point := range getLowPoints(grid) {
+		riskLevel += point.risk
+	}
+	return riskLevel
 }
 
 func doPart2(grid [][]int) int {
