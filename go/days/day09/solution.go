@@ -102,13 +102,15 @@ func doPart1(grid [][]int) int {
 func doPart2(grid [][]int) int {
 	lowPoints := getLowPoints(grid)
 	basinSizes := make([]int, len(lowPoints))
-	workGrid := getEmptyGrid(grid)
 
-	// Create a work grid where we will store the low-point-id that each point belongs to
+	// Create a workGrid where we will store the low-point-id that each grid point belongs to
+	// The low-point-id is the index-of-the-low-point-plus-one in the lowPoints slice
+	workGrid := getEmptyGrid(grid)
 	fillLowPoints(workGrid, lowPoints, basinSizes)
 	fillNines(workGrid, grid)
 
-	// Expand low points until nothing can be expanded
+	// Expand the low-point-ids in the workGrid, "contagion style", until every point
+	// of the workGrid is either -1 (a "nine") or a low-point-id
 	numExpansions := 1
 	for {
 		if numExpansions == 0 {
