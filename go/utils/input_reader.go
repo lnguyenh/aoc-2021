@@ -61,3 +61,20 @@ func ReadFileAsSliceOfRuneSlices(path string) [][]rune {
 	_ = file.Close()
 	return values
 }
+
+func ReadFileAsSliceOfDigitIntSlices(path string) [][]int {
+	var values [][]int
+	file, _ := os.Open(path)
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+	for scanner.Scan() {
+		runes := []rune(scanner.Text())
+		var line []int
+		for _, char := range runes {
+			line = append(line, RuneToDigitInt(char))
+		}
+		values = append(values, line)
+	}
+	_ = file.Close()
+	return values
+}
