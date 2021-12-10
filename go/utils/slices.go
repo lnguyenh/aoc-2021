@@ -64,6 +64,15 @@ func SortRuneSlice(runeSlice []rune) []rune {
 	return r
 }
 
+func RuneRevertSlice(list []rune) []rune {
+	maxIndex := len(list) - 1
+	reverted := make([]rune, len(list))
+	for i, value := range list {
+		reverted[maxIndex-i] = value
+	}
+	return reverted
+}
+
 //
 // Strings
 //
