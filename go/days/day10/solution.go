@@ -31,6 +31,7 @@ func traverse(blob []rune) (bool, bool, rune, []rune) {
 			if char == closing[stack[len(stack)-1]] {
 				stack = stack[:len(stack)-1]
 			} else {
+				// syntax error
 				return false, false, char, stack
 			}
 		}
@@ -39,6 +40,7 @@ func traverse(blob []rune) (bool, bool, rune, []rune) {
 		// incomplete
 		return true, true, '0', stack
 	} else {
+		// valid
 		return true, false, '0', stack
 	}
 
