@@ -124,7 +124,6 @@ func doPart2(caves map[string]caveNode) int {
 func Run(path string) {
 	input := utils.ReadFileAsStringSlice(path, "\n")
 	caves := buildCaves(input)
-	fmt.Printf("input: %v\n", len(caves))
 	answer1 := doPart1(caves)
 	answer2 := doPart2(caves)
 	fmt.Printf("Part 1 answer: %v\n", answer1)
