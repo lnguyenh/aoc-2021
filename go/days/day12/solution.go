@@ -10,16 +10,16 @@ import (
 type caveNode struct {
 	name       string
 	isSmall    bool
-	neighbours map[string]caveNode
+	neighbours map[string]bool
 }
 
 func (cave *caveNode) add(neighbourCave caveNode) {
-	cave.neighbours[neighbourCave.name] = neighbourCave
+	cave.neighbours[neighbourCave.name] = true
 }
 
 func createCave(name string) caveNode {
 	asRunes := []rune(name)
-	neighbours := make(map[string]caveNode)
+	neighbours := make(map[string]bool)
 	return caveNode{
 		name:       name,
 		isSmall:    unicode.IsLower(asRunes[0]),
@@ -27,8 +27,34 @@ func createCave(name string) caveNode {
 	}
 }
 
-func doPart1() int {
-	return 0
+func traverse(caveName string, caves map[string]caveNode, visited []string, path []string, endPaths *[][]string) {
+	newPath := make([]string, len(path))
+	copy(newPath, path)
+	newPath = append(newPath, caveName)
+	if caveName == "end" {
+		*endPaths = append(*endPaths, newPath)
+		return
+	}
+	if utils.StringInSlice(caveName, visited) {
+		return
+	} else {
+		cave := caves[caveName]
+		if cave.isSmall {
+			visited = append(visited, caveName)
+		}
+		for neighbourName := range cave.neighbours {
+			traverse(neighbourName, caves, visited, newPath, endPaths)
+		}
+	}
+}
+
+func doPart1(caves map[string]caveNode) int {
+	endPaths := make([][]string, 0)
+	traverse("start", caves, make([]string, 0), make([]string, 0), &endPaths)
+	for _, path := range endPaths {
+		fmt.Printf("%v\n", path)
+	}
+	return len(endPaths)
 }
 
 func doPart2() int {
@@ -59,11 +85,10 @@ func buildCaves(segments []string) map[string]caveNode {
 }
 
 func Run(path string) {
-
 	input := utils.ReadFileAsStringSlice(path, "\n")
 	caves := buildCaves(input)
 	fmt.Printf("input: %v\n", len(caves))
-	answer1 := doPart1()
+	answer1 := doPart1(caves)
 	answer2 := doPart2()
 	fmt.Printf("Part 1 answer: %v\n", answer1)
 	fmt.Printf("Part 2 answer: %v\n", answer2)
