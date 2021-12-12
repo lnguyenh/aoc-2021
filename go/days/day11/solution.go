@@ -152,7 +152,7 @@ func createGame(input [][]int) octopusGame {
 func doPart1(game octopusGame) int {
 	for i := 0; i < 100; i++ {
 		game.applyStep()
-		game.print()
+		// game.print()
 	}
 	return game.numFlashes
 }
@@ -163,7 +163,7 @@ func doPart2(game octopusGame) int {
 			break
 		}
 		game.applyStep()
-		game.print()
+		// game.print()
 	}
 	return game.numSteps
 }
