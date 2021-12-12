@@ -10,24 +10,24 @@ import (
 type caveNode struct {
 	name       string
 	isSmall    bool
-	neighbours map[string]bool
+	neighbours []string
 }
 
-func (cave caveNode) add(neighbourCave caveNode) {
-	cave.neighbours[neighbourCave.name] = true
+func (cave *caveNode) addNeighbour(name string) {
+	cave.neighbours = append(cave.neighbours, name)
 }
 
-func createCave(name string) caveNode {
+func createCave(name string) *caveNode {
 	asRunes := []rune(name)
-	neighbours := make(map[string]bool)
-	return caveNode{
+	neighbours := make([]string, 0, 50)
+	return &caveNode{
 		name:       name,
 		isSmall:    unicode.IsLower(asRunes[0]),
 		neighbours: neighbours,
 	}
 }
 
-func getOrCreate(name string, caves map[string]caveNode) caveNode {
+func getOrCreate(name string, caves map[string]*caveNode) *caveNode {
 	cave, caveExists := caves[name]
 	if !caveExists {
 		cave = createCave(name)
@@ -36,51 +36,57 @@ func getOrCreate(name string, caves map[string]caveNode) caveNode {
 	return cave
 }
 
-func buildCaves(segments []string) map[string]caveNode {
-	caves := make(map[string]caveNode)
+func buildCaves(segments []string) map[string]*caveNode {
+	caves := make(map[string]*caveNode)
 	for _, segment := range segments {
 		names := strings.Split(segment, "-")
 		name1, name2 := names[0], names[1]
 		cave1 := getOrCreate(name1, caves)
 		cave2 := getOrCreate(name2, caves)
-		cave1.add(cave2)
-		cave2.add(cave1)
+		cave1.addNeighbour(cave2.name)
+		cave2.addNeighbour(cave1.name)
 	}
 	return caves
 }
 
 func copyAndAdd(path []string, caveName string) []string {
-	newPath := make([]string, len(path))
+	newPath := make([]string, 0, len(path)+1)
 	copy(newPath, path)
 	return append(newPath, caveName)
 }
 
-func traversePart1(caveName string, caves map[string]caveNode, visited []string, path []string, endPaths *[][]string) {
-	newPath := copyAndAdd(path, caveName)
-
-	// Bail and add a new end path if we reach the end
-	if caveName == "end" {
-		*endPaths = append(*endPaths, newPath)
-		return
-	}
-
+func traversePart1(caveName string, caves map[string]*caveNode, visited []string, path []string, endPaths *[][]string) {
 	// Bail if we reach a cave twice
 	if utils.StringInSlice(caveName, visited) {
 		return
 	}
 
+	newPath := copyAndAdd(path, caveName)
+
+	// Bail and add a new end path if we reach the end
+	if caveName == "end" {
+		*endPaths = append(*endPaths, newPath)
+		return
+	}
 	cave := caves[caveName]
 	if cave.isSmall {
 		visited = append(visited, caveName)
 	}
-	for neighbourName := range cave.neighbours {
+	for _, neighbourName := range cave.neighbours {
 		traversePart1(neighbourName, caves, visited, newPath, endPaths)
 	}
 
 }
 
-func traversePart2(caveName string, caves map[string]caveNode, visited []string, twiceReached string, path []string, endPaths *[][]string, isRoot bool) {
-	newTwiceReached := twiceReached
+func traversePart2(caveName string, caves map[string]*caveNode, visited []string, nameOfCaveVisitedTwice string, path []string, endPaths *[][]string, isRoot bool) {
+	caveAlreadyVisited := utils.StringInSlice(caveName, visited)
+
+	if (caveName == "start" && !isRoot) || // start
+		caveName == nameOfCaveVisitedTwice || // reached 3 times
+		nameOfCaveVisitedTwice != "" && caveAlreadyVisited { // reached two caves twice
+		return
+	}
+
 	newPath := copyAndAdd(path, caveName)
 
 	// Bail and add a new end path if we reach the end
@@ -89,34 +95,28 @@ func traversePart2(caveName string, caves map[string]caveNode, visited []string,
 		return
 	}
 
-	if (caveName == "start" && !isRoot) || // start
-		caveName == twiceReached || // reached 3 times
-		twiceReached != "" && utils.StringInSlice(caveName, visited) { // reached two caves twice
-		return
-	}
-
 	cave := caves[caveName]
 	if cave.isSmall {
-		if utils.StringInSlice(caveName, visited) {
-			newTwiceReached = caveName
+		if caveAlreadyVisited {
+			nameOfCaveVisitedTwice = caveName
 		} else {
 			visited = append(visited, caveName)
 		}
 	}
-	for neighbourName := range cave.neighbours {
-		traversePart2(neighbourName, caves, visited, newTwiceReached, newPath, endPaths, false)
+	for _, neighbourName := range cave.neighbours {
+		traversePart2(neighbourName, caves, visited, nameOfCaveVisitedTwice, newPath, endPaths, false)
 	}
 
 }
 
-func doPart1(caves map[string]caveNode) int {
-	endPaths := make([][]string, 0)
+func doPart1(caves map[string]*caveNode) int {
+	endPaths := make([][]string, 0, 200000)
 	traversePart1("start", caves, make([]string, 0), make([]string, 0), &endPaths)
 	return len(endPaths)
 }
 
-func doPart2(caves map[string]caveNode) int {
-	endPaths := make([][]string, 0)
+func doPart2(caves map[string]*caveNode) int {
+	endPaths := make([][]string, 0, 200000)
 	traversePart2("start", caves, make([]string, 0), "", make([]string, 0), &endPaths, true)
 	return len(endPaths)
 }
