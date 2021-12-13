@@ -83,13 +83,13 @@ func doPart1(points [][2]int, folds []instructionFold) int {
 	return len(newPoints)
 }
 
-func doPart2(points [][2]int, folds []instructionFold) int {
+func doPart2(points [][2]int, folds []instructionFold) string {
 	newPoints := applyFold(points, folds[0])
 	for _, fold := range folds[1:] {
 		newPoints = applyFold(newPoints, fold)
 	}
 	printGrid(newPoints)
-	return len(newPoints)
+	return fmt.Sprintf("Check the printed grid above and read the text")
 }
 
 func parseInput(input []string) ([][2]int, []instructionFold) {
