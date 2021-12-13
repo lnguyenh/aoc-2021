@@ -105,7 +105,7 @@ func parseInput(input []string) ([][2]int, []instructionFold) {
 	var folds []instructionFold
 	for _, rawInstruction := range input[1:] {
 		parts := strings.Split(rawInstruction, "=")
-		value, _ := strconv.Atoi(strings.TrimSuffix(parts[1], "\n"))
+		value, _ := strconv.Atoi(parts[1])
 		folds = append(folds, instructionFold{axe: parts[0], value: value})
 	}
 	return points, folds
@@ -113,7 +113,7 @@ func parseInput(input []string) ([][2]int, []instructionFold) {
 }
 
 func Run(path string) {
-	input := utils.ReadFileAsStringSlice(path, "fold along ")
+	input := utils.ReadFileAsStringSlice(path, "\nfold along ")
 	points, folds := parseInput(input)
 	answer1 := doPart1(points, folds)
 	answer2 := doPart2(points, folds)
