@@ -24,6 +24,16 @@ func MaxSlice(slice []int) int {
 	return max
 }
 
+func MinSlice(slice []int) int {
+	min := slice[0]
+	for _, value := range slice {
+		if value < min {
+			min = value
+		}
+	}
+	return min
+}
+
 func IntInSlice(a int, list []int) bool {
 	for _, b := range list {
 		if b == a {
@@ -71,6 +81,16 @@ func RuneRevertSlice(list []rune) []rune {
 		reverted[maxIndex-i] = value
 	}
 	return reverted
+}
+
+func RuneSliceToSet(list []rune) []rune {
+	var set []rune
+	for _, value := range list {
+		if !RuneInSlice(value, set) {
+			set = append(set, value)
+		}
+	}
+	return set
 }
 
 //
