@@ -15,74 +15,85 @@ func getAlphabet() []rune {
 	return alphabet
 }
 
-func getCounts(text string) (map[rune]int, []int) {
-	counts := make(map[rune]int)
+func getCountsBetter(segmentCounts map[string]int, endLetter string) (map[string]int, []int) {
+	counts := make(map[string]int)
 	countsAsSlice := make([]int, 0, 3)
 	for _, letter := range getAlphabet() {
-		counter := 0
-		for _, char := range []rune(text) {
-			if char == letter {
-				counter++
-			}
-		}
-		if counter > 0 {
-			counts[letter] = counter
-			countsAsSlice = append(countsAsSlice, counter)
+		counts[string(letter)] = 0
+	}
+	for segment, count := range segmentCounts {
+		counts[string(segment[0])] += count
+	}
+	counts[endLetter] += 1
+	for _, count := range counts {
+		if count > 0 {
+			countsAsSlice = append(countsAsSlice, count)
 		}
 	}
 	return counts, countsAsSlice
 }
 
-func applyConversion(initial string, conversions map[string][]rune) string {
-	var output = make([]rune, 0, 2*len(initial)+1)
-	output = append(output, rune(initial[0]))
-	for i := 0; i < len(initial)-1; i++ {
-		key := initial[i : i+2]
-		output = append(output, conversions[key]...)
-	}
-	return string(output)
-}
-
-func doPart1(initial string, conversions map[string][]rune) int {
-	var transformed = initial
-
-	for i := 0; i < 10; i++ {
-		transformed = applyConversion(transformed, conversions)
-		// fmt.Println(transformed)
-	}
-	_, counts := getCounts(transformed)
-	return utils.MaxSlice(counts) - utils.MinSlice(counts)
-
-}
-
-func doPart2(initial string, conversions map[string][]rune) int {
-	var transformed = initial
-
-	for i := 0; i < 40; i++ {
-		transformed = applyConversion(transformed, conversions)
-		// fmt.Println(transformed)
-	}
-	_, counts := getCounts(transformed)
-	return utils.MaxSlice(counts) - utils.MinSlice(counts)
-}
-
-func getConversions(text string) map[string][]rune {
-	conversions := make(map[string][]rune)
+func getConversionsBetter(text string) map[string][2]string {
+	conversions := make(map[string][2]string)
 	for _, line := range strings.Split(text, "\n") {
 		elements := strings.Split(line, " -> ")
-		conversions[elements[0]] = []rune(elements[1] + string(elements[0][1]))
+		initialSegment := elements[0]
+		resultingSegments := [2]string{
+			elements[0][0:1] + elements[1],
+			elements[1] + elements[0][1:2],
+		}
+		conversions[initialSegment] = resultingSegments
 	}
 	return conversions
 }
 
+func applyConversionBetter(initial map[string]int, conversions map[string][2]string) map[string]int {
+	var output = make(map[string]int)
+	for segment, count := range initial {
+		segments := conversions[segment]
+		output[segments[0]] += count
+		output[segments[1]] += count
+	}
+	return output
+}
+
+func getInitialCounts(text string, conversions map[string][2]string) map[string]int {
+	var initialCounts = make(map[string]int)
+	for segment := range conversions {
+		initialCounts[segment] = 0
+	}
+	for i := 0; i < len(text)-1; i++ {
+		initialCounts[text[i:i+2]] += 1
+	}
+	return initialCounts
+}
+
+func doPart1(initial map[string]int, conversions map[string][2]string, endLetter string) int {
+	var transformed = initial
+	for i := 0; i < 10; i++ {
+		transformed = applyConversionBetter(transformed, conversions)
+	}
+	_, counts := getCountsBetter(transformed, endLetter)
+	return utils.MaxSlice(counts) - utils.MinSlice(counts)
+
+}
+
+func doPart2(initial map[string]int, conversions map[string][2]string, endLetter string) int {
+	var transformed = initial
+	for i := 0; i < 40; i++ {
+		transformed = applyConversionBetter(transformed, conversions)
+	}
+	_, counts := getCountsBetter(transformed, endLetter)
+	return utils.MaxSlice(counts) - utils.MinSlice(counts)
+}
+
 func Run(path string) {
 	input := utils.ReadFileAsStringSlice(path, "\n\n")
-	// fmt.Printf("input: -%v-\n", input[1])
-	// fmt.Printf("input: -%v-\n", input[0])
-	initial := input[0]
-	conversions := getConversions(input[1])
-	// answer1 := doPart1(initial, conversions)
-	// fmt.Printf("Part 1 answer: %v\n", answer1)
-	answer2 := doPart2(initial, conversions)
+	conversions := getConversionsBetter(input[1])
+	initial := getInitialCounts(input[0], conversions)
+	endLetter := string(input[0][len(input[0])-1])
+	answer1 := doPart1(initial, conversions, endLetter)
+	fmt.Printf("Part 1 answer: %v\n", answer1)
+	answer2 := doPart2(initial, conversions, endLetter)
 	fmt.Printf("Part 2 answer: %v\n", answer2)
 }
