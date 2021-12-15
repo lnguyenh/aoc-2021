@@ -105,3 +105,13 @@ func StringInSlice(a string, list []string) bool {
 	}
 	return false
 }
+
+func StringsNotInSlice(candidates []string, list []string) []string {
+	results := make([]string, 0, len(candidates))
+	for _, candidate := range candidates {
+		if !StringInSlice(candidate, list) {
+			results = append(results, candidate)
+		}
+	}
+	return results
+}
