@@ -79,7 +79,7 @@ func (packet *bitsPacket) parse() {
 		packet.totalLength = 6 + length
 
 	default:
-		packet.totalLength = 6
+		packet.totalLength = 0
 		packet.lengthType = utils.RuneToInt(rune(packet.sequence[6]))
 		if packet.lengthType == 0 {
 			length := utils.BitsToInt(packet.sequence[7 : 7+15])
@@ -111,6 +111,62 @@ func (packet *bitsPacket) parse() {
 	}
 }
 
+func (packet *bitsPacket) sumVersions() int {
+	sumSubVersions := 0
+	for _, subPacket := range packet.subPackets {
+		sumSubVersions += subPacket.sumVersions()
+	}
+	return packet.version + sumSubVersions
+}
+
+func (packet *bitsPacket) evaluate() int {
+	result := 0
+	values := make([]int, 0)
+	for _, subPacket := range packet.subPackets {
+		values = append(values, subPacket.evaluate())
+	}
+
+	switch packet.typeId {
+	case 0:
+		result = 0
+		for _, value := range values {
+			result = result + value
+		}
+	case 1:
+		result = 1
+		for _, value := range values {
+			result = result * value
+		}
+	case 2:
+		result = utils.MinSlice(values)
+	case 3:
+		result = utils.MaxSlice(values)
+	case 4:
+		result = packet.literal
+	case 5:
+		if values[0] > values[1] {
+			result = 1
+		} else {
+			result = 0
+		}
+	case 6:
+		if values[0] < values[1] {
+			result = 1
+		} else {
+			result = 0
+		}
+	case 7:
+		if values[0] == values[1] {
+			result = 1
+		} else {
+			result = 0
+		}
+	default:
+		fmt.Printf("Error!!!!! %v\n", packet.typeId)
+	}
+	return result
+}
+
 func getLiteral(bits string) (int, int) {
 	literalAsString := ""
 	length := 0
@@ -124,14 +180,12 @@ func getLiteral(bits string) (int, int) {
 	return utils.BitsToInt(literalAsString), length
 }
 
-func doPart1(sequence string) int {
-	packet := createBitsPacket(sequence)
-	fmt.Printf("%v\n", packet)
-	return 0
+func doPart1(packet *bitsPacket) int {
+	return packet.sumVersions()
 }
 
-func doPart2() int {
-	return 0
+func doPart2(packet *bitsPacket) int {
+	return packet.evaluate()
 }
 
 func getSequence(text []rune) string {
@@ -143,10 +197,10 @@ func getSequence(text []rune) string {
 }
 
 func Run(path string) {
-	input := getSequence(utils.ReadFileAsSliceOfRuneSlices(path)[0])
-	fmt.Printf("input: %v\n", input)
-	answer1 := doPart1(input)
-	answer2 := doPart2()
+	sequence := getSequence(utils.ReadFileAsSliceOfRuneSlices(path)[0])
+	packet := createBitsPacket(sequence)
+	answer1 := doPart1(packet)
+	answer2 := doPart2(packet)
 	fmt.Printf("Part 1 answer: %v\n", answer1)
 	fmt.Printf("Part 2 answer: %v\n", answer2)
 }
