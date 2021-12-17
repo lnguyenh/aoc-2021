@@ -19,6 +19,14 @@ type aocProbe struct {
 	maxX int
 	minY int
 	maxY int
+
+	// memory
+	points       map[string]bool
+	targetPoints map[string]bool
+}
+
+func getKey(x, y int) string {
+	return fmt.Sprintf("%v-%v", x, y)
 }
 
 func createProbe(target []int) *aocProbe {
@@ -30,7 +38,40 @@ func createProbe(target []int) *aocProbe {
 		minY: utils.MinSlice(target[2:]),
 		maxY: utils.MaxSlice(target[2:]),
 	}
+	targetPoints := make(map[string]bool)
+	for x := probe.minX; x <= probe.maxX; x++ {
+		for y := probe.minY; y <= probe.maxY; y++ {
+			targetPoints[getKey(x, y)] = true
+		}
+	}
+	probe.targetPoints = targetPoints
 	return &probe
+}
+
+func (probe *aocProbe) print(minX, maxX, minY, maxY int) {
+	fmt.Printf("   ")
+	for x := minX; x <= maxX; x++ {
+		fmt.Printf("%v ", x%10)
+	}
+	fmt.Printf("\n")
+
+	for y := maxY; y >= minY; y-- {
+		fmt.Printf("%02v ", y%10)
+		for x := minX; x <= maxX; x++ {
+			key := getKey(x, y)
+			if x == probe.x && y == probe.y {
+				fmt.Printf("* ")
+			} else if probe.points[key] {
+				fmt.Printf("# ")
+			} else if probe.targetPoints[key] {
+				fmt.Printf("T ")
+			} else {
+				fmt.Printf(". ")
+			}
+		}
+		fmt.Printf("\n")
+	}
+	fmt.Printf("\n")
 }
 
 func (probe *aocProbe) doStep() {
@@ -42,11 +83,64 @@ func (probe *aocProbe) doStep() {
 		probe.vX++
 	}
 	probe.vY--
+	probe.points[getKey(probe.x, probe.y)] = true
+}
+
+func (probe *aocProbe) isInTarget() bool {
+	return probe.minX <= probe.x &&
+		probe.x <= probe.maxX &&
+		probe.minY <= probe.y &&
+		probe.y <= probe.maxY
+}
+
+func (probe *aocProbe) isDead() bool {
+	if probe.y <= probe.minY {
+		return true
+	}
+	if probe.vX < 0 && probe.x < probe.minX {
+		return true
+	}
+	if probe.vX > 0 && probe.x > probe.maxX {
+		return true
+	}
+	if probe.vX == 0 && !(probe.minX <= probe.x && probe.x <= probe.maxX) {
+		return true
+	}
+	return false
+}
+
+func (probe *aocProbe) isAlive() bool {
+	return !probe.isDead()
+}
+
+func (probe *aocProbe) set(vX, vY int) {
+	probe.x = 0
+	probe.y = 0
+	probe.vX = vX
+	probe.vY = vY
+	probe.points = make(map[string]bool)
+	probe.points[getKey(0, 0)] = true
+}
+
+func (probe *aocProbe) isVectorValid(vX, vY int) bool {
+	probe.set(vX, vY)
+	for {
+		if probe.isInTarget() {
+			return true
+		}
+		if probe.isDead() {
+			break
+		}
+		probe.doStep()
+	}
+	return false
 }
 
 func doPart1(target []int) int {
 	probe := createProbe(target)
-	probe.doStep()
+	probe.print(0, 30, -15, 5)
+	probe.isVectorValid(7, 2)
+	probe.print(0, 30, -15, 5)
 	return 0
 }
 
