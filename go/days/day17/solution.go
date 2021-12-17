@@ -15,14 +15,14 @@ type aocProbe struct {
 	vY int
 
 	// target
-	minX int
-	maxX int
-	minY int
-	maxY int
+	minX         int
+	maxX         int
+	minY         int
+	maxY         int
+	targetPoints map[string]bool
 
-	// memory
+	// run trail
 	points           map[string]bool
-	targetPoints     map[string]bool
 	maxHeightThisRun int
 }
 
