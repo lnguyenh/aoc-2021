@@ -23,6 +23,7 @@ type aocProbe struct {
 	// memory
 	points       map[string]bool
 	targetPoints map[string]bool
+	maxHeight    int
 }
 
 func getKey(x, y int) string {
@@ -84,6 +85,10 @@ func (probe *aocProbe) doStep() {
 	}
 	probe.vY--
 	probe.points[getKey(probe.x, probe.y)] = true
+	if probe.y > probe.maxHeight {
+		probe.maxHeight = probe.y
+	}
+
 }
 
 func (probe *aocProbe) isInTarget() bool {
@@ -120,6 +125,7 @@ func (probe *aocProbe) set(vX, vY int) {
 	probe.vY = vY
 	probe.points = make(map[string]bool)
 	probe.points[getKey(0, 0)] = true
+	probe.maxHeight = 0
 }
 
 func (probe *aocProbe) isVectorValid(vX, vY int) bool {
@@ -136,24 +142,23 @@ func (probe *aocProbe) isVectorValid(vX, vY int) bool {
 	return false
 }
 
-func doPart1(target []int) int {
-	probe := createProbe(target)
-	probe.print(0, 30, -15, 5)
-	probe.isVectorValid(7, 2)
-	probe.print(0, 30, -15, 5)
-	return 0
-}
-
-func doPart2() int {
-	return 0
+func (probe *aocProbe) Scan() (int, int) {
+	maxHeights := make([]int, 0, 2500)
+	for vx := 0; vx < 600; vx++ {
+		for vy := -600; vy < 600; vy++ {
+			if probe.isVectorValid(vx, vy) {
+				maxHeights = append(maxHeights, probe.maxHeight)
+			}
+		}
+	}
+	return utils.MaxSlice(maxHeights), len(maxHeights)
 }
 
 func Run(path string) {
 	target := utils.StringSliceToIntSlice(utils.CleanSlice(utils.ReadFileAsStringSliceMulti(
 		path, []string{"target area: ", ",", "x=", "y=", ".."})))
-	fmt.Printf("input: %v\n", target)
-	answer1 := doPart1(target)
-	answer2 := doPart2()
-	fmt.Printf("Part 1 answer: %v\n", answer1)
-	fmt.Printf("Part 2 answer: %v\n", answer2)
+	probe := createProbe(target)
+	maxHeight, numSuccesses := probe.Scan()
+	fmt.Printf("Part 1 answer: %v\n", maxHeight)
+	fmt.Printf("Part 2 answer: %v\n", numSuccesses)
 }
