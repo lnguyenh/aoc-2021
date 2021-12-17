@@ -1,6 +1,9 @@
 package utils
 
-import "sort"
+import (
+	"sort"
+	"strings"
+)
 
 //
 // Int
@@ -15,7 +18,7 @@ func SumSlice(measurement []int) int {
 }
 
 func MaxSlice(slice []int) int {
-	max := 0
+	max := slice[0]
 	for _, value := range slice {
 		if value > max {
 			max = value
@@ -114,4 +117,23 @@ func StringsNotInSlice(candidates []string, list []string) []string {
 		}
 	}
 	return results
+}
+
+func CleanSlice(slice []string) []string {
+	result := make([]string, 0, len(slice))
+	for _, word := range slice {
+		trimmed := strings.TrimSpace(word)
+		if len(trimmed) > 0 {
+			result = append(result, trimmed)
+		}
+	}
+	return result
+}
+
+func StringSliceToIntSlice(list []string) []int {
+	result := make([]int, 0, len(list))
+	for _, element := range list {
+		result = append(result, StringToInt(element))
+	}
+	return result
 }

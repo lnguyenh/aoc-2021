@@ -38,6 +38,14 @@ func ReadFileAsStringSlice(path string, delimiter string) []string {
 	return strings.Split(ReadFileAsString(path), delimiter)
 }
 
+func ReadFileAsStringSliceMulti(path string, delimiters []string) []string {
+	text := ReadFileAsString(path)
+	for _, delimiter := range delimiters {
+		text = strings.Join(strings.Split(text, delimiter), "$")
+	}
+	return strings.Split(text, "$")
+}
+
 func ReadFileAsSliceOfStringSlices(path string, delimiter string) [][]string {
 	var values [][]string
 	file, _ := os.Open(path)
