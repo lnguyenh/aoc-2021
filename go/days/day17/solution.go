@@ -21,9 +21,9 @@ type aocProbe struct {
 	maxY int
 
 	// memory
-	points       map[string]bool
-	targetPoints map[string]bool
-	maxHeight    int
+	points           map[string]bool
+	targetPoints     map[string]bool
+	maxHeightThisRun int
 }
 
 func getKey(x, y int) string {
@@ -85,8 +85,8 @@ func (probe *aocProbe) doStep() {
 	}
 	probe.vY--
 	probe.points[getKey(probe.x, probe.y)] = true
-	if probe.y > probe.maxHeight {
-		probe.maxHeight = probe.y
+	if probe.y > probe.maxHeightThisRun {
+		probe.maxHeightThisRun = probe.y
 	}
 
 }
@@ -99,23 +99,13 @@ func (probe *aocProbe) isInTarget() bool {
 }
 
 func (probe *aocProbe) isDead() bool {
-	if probe.y <= probe.minY {
-		return true
-	}
-	if probe.vX < 0 && probe.x < probe.minX {
-		return true
-	}
-	if probe.vX > 0 && probe.x > probe.maxX {
-		return true
-	}
-	if probe.vX == 0 && !(probe.minX <= probe.x && probe.x <= probe.maxX) {
+	if probe.y <= probe.minY ||
+		probe.vX < 0 && probe.x < probe.minX ||
+		probe.vX > 0 && probe.x > probe.maxX ||
+		probe.vX == 0 && !(probe.minX <= probe.x && probe.x <= probe.maxX) {
 		return true
 	}
 	return false
-}
-
-func (probe *aocProbe) isAlive() bool {
-	return !probe.isDead()
 }
 
 func (probe *aocProbe) set(vX, vY int) {
@@ -125,7 +115,7 @@ func (probe *aocProbe) set(vX, vY int) {
 	probe.vY = vY
 	probe.points = make(map[string]bool)
 	probe.points[getKey(0, 0)] = true
-	probe.maxHeight = 0
+	probe.maxHeightThisRun = 0
 }
 
 func (probe *aocProbe) isVectorValid(vX, vY int) bool {
@@ -144,10 +134,10 @@ func (probe *aocProbe) isVectorValid(vX, vY int) bool {
 
 func (probe *aocProbe) Scan() (int, int) {
 	maxHeights := make([]int, 0, 2500)
-	for vx := 0; vx < 600; vx++ {
-		for vy := -600; vy < 600; vy++ {
+	for vx := 0; vx < 300; vx++ {
+		for vy := -300; vy < 300; vy++ {
 			if probe.isVectorValid(vx, vy) {
-				maxHeights = append(maxHeights, probe.maxHeight)
+				maxHeights = append(maxHeights, probe.maxHeightThisRun)
 			}
 		}
 	}
@@ -159,6 +149,10 @@ func Run(path string) {
 		path, []string{"target area: ", ",", "x=", "y=", ".."})))
 	probe := createProbe(target)
 	maxHeight, numSuccesses := probe.Scan()
+
+	// probe.isVectorValid(7, 2)
+	// probe.print(0, 30, -12, 5)
+
 	fmt.Printf("Part 1 answer: %v\n", maxHeight)
 	fmt.Printf("Part 2 answer: %v\n", numSuccesses)
 }
