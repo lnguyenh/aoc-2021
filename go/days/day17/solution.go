@@ -38,7 +38,7 @@ func (probe *aocProbe) doStep() {
 	probe.y = probe.y + probe.vY
 	if probe.vX > 0 {
 		probe.vX--
-	} else {
+	} else if probe.vX < 0 {
 		probe.vX++
 	}
 	probe.vY--
@@ -46,7 +46,7 @@ func (probe *aocProbe) doStep() {
 
 func doPart1(target []int) int {
 	probe := createProbe(target)
-	fmt.Printf("probe: %v\n", probe)
+	probe.doStep()
 	return 0
 }
 
