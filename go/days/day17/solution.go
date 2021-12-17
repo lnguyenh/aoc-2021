@@ -76,14 +76,19 @@ func (probe *aocProbe) print(minX, maxX, minY, maxY int) {
 }
 
 func (probe *aocProbe) doStep() {
+	// position change
 	probe.x = probe.x + probe.vX
 	probe.y = probe.y + probe.vY
+
+	// velocity change
 	if probe.vX > 0 {
 		probe.vX--
 	} else if probe.vX < 0 {
 		probe.vX++
 	}
 	probe.vY--
+
+	// keep track of visited points and max height reached
 	probe.points[getKey(probe.x, probe.y)] = true
 	if probe.y > probe.maxHeightThisRun {
 		probe.maxHeightThisRun = probe.y
@@ -108,7 +113,7 @@ func (probe *aocProbe) isDead() bool {
 	return false
 }
 
-func (probe *aocProbe) set(vX, vY int) {
+func (probe *aocProbe) initializeRune(vX, vY int) {
 	probe.x = 0
 	probe.y = 0
 	probe.vX = vX
@@ -119,7 +124,7 @@ func (probe *aocProbe) set(vX, vY int) {
 }
 
 func (probe *aocProbe) isVectorValid(vX, vY int) bool {
-	probe.set(vX, vY)
+	probe.initializeRune(vX, vY)
 	for {
 		if probe.isInTarget() {
 			return true
@@ -132,7 +137,7 @@ func (probe *aocProbe) isVectorValid(vX, vY int) bool {
 	return false
 }
 
-func (probe *aocProbe) Scan() (int, int) {
+func (probe *aocProbe) scan() (int, int) {
 	maxHeights := make([]int, 0, 2500)
 	for vx := 0; vx < 300; vx++ {
 		for vy := -300; vy < 300; vy++ {
@@ -148,10 +153,10 @@ func Run(path string) {
 	target := utils.StringSliceToIntSlice(utils.CleanSlice(utils.ReadFileAsStringSliceMulti(
 		path, []string{"target area: ", ",", "x=", "y=", ".."})))
 	probe := createProbe(target)
-	maxHeight, numSuccesses := probe.Scan()
+	maxHeight, numSuccesses := probe.scan()
 
-	// probe.isVectorValid(7, 2)
-	// probe.print(0, 30, -12, 5)
+	probe.isVectorValid(7, 2)
+	probe.print(0, 30, -12, 5)
 
 	fmt.Printf("Part 1 answer: %v\n", maxHeight)
 	fmt.Printf("Part 2 answer: %v\n", numSuccesses)
