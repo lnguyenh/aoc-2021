@@ -16,6 +16,10 @@ func RuneToInt(r rune) int {
 	return int(r - '0')
 }
 
+func DigitToRune(d int) rune {
+	return rune(d) + '0'
+}
+
 func StringToInt(s string) int {
 	value, _ := strconv.Atoi(s)
 	return value
