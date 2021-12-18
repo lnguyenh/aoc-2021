@@ -21,16 +21,20 @@ func add(expression1, expression2 string) string {
 func needsExplode(expression string) int {
 	blob := []rune(expression)
 	var stack []rune
-	for i, char := range blob {
-		if char == '[' {
-			stack = append(stack, char)
-		} else if char == ']' {
+	for i := 0; i < len(blob)-3; i++ {
+		char1, char2, char3 := blob[i], blob[i+1], blob[i+2]
+		if char1 == '[' {
+			stack = append(stack, char1)
+		} else if char1 == ']' {
 			stack = stack[:len(stack)-1]
-		}
-		if len(stack) == 5 {
-			return i
+		} else {
+			if len(stack) >= 5 && unicode.IsDigit(char1) && char2 == ',' && unicode.IsDigit(char3) {
+				fmt.Printf("%v\n", string(char1))
+				return i - 1
+			}
 		}
 	}
+
 	return -1
 }
 
@@ -79,8 +83,8 @@ func explode(expression string, indexExplosion int) string {
 func split(expression string) string {
 	blob := []rune(expression)
 	for i := 0; i < len(blob)-1; i++ {
-		potentialNumber, error := strconv.Atoi(string(blob[i : i+2]))
-		if error == nil {
+		potentialNumber, e := strconv.Atoi(string(blob[i : i+2]))
+		if e == nil {
 			up := utils.DigitToRune(int(math.Ceil(float64(potentialNumber) / 2)))
 			down := utils.DigitToRune(int(math.Floor(float64(potentialNumber) / 2.0)))
 			insert := []rune{'[', down, ',', up, ']'}
@@ -96,27 +100,43 @@ func split(expression string) string {
 
 func doTests() {
 	expression := "[[3,[2,[8,0]]],[9,[5,[4,[3,2]]]]]"
-	fmt.Println(expression)
-	indexExplosion := needsExplode(expression)
-	exploded := explode(expression, indexExplosion)
-	fmt.Printf("%v\n", exploded)
-
-	expression = "[[[[0,7],4],[15,[0,13]]],[1,1]]"
-	fmt.Println(expression)
-	splitted := split(expression)
-	fmt.Printf("%v\n", splitted)
+	for {
+		originalLength := len(expression)
+		indexExplosion := needsExplode(expression)
+		if indexExplosion > 0 {
+			fmt.Printf("%v needs explode at %v\n", expression, indexExplosion)
+			expression = explode(expression, indexExplosion)
+			fmt.Printf("%v after explode\n", expression)
+		} else {
+			expression = split(expression)
+			fmt.Printf("%v after split\n", expression)
+		}
+		if originalLength == len(expression) {
+			break
+		}
+	}
 }
 
 func doPart1(expressions []string) int {
 	expression := expressions[0]
-	for _, nextExpression := range expressions[1:] {
+	fmt.Println("----------------------------------------------")
+	for i, nextExpression := range expressions[1:] {
+		fmt.Println("----------------------------------------------")
+		fmt.Printf("#%v\n", i)
+		fmt.Printf("%v expression \n", expression)
+		fmt.Printf("%v next expression\n", nextExpression)
 		expression = add(expression, nextExpression)
+		fmt.Printf("%v after addition\n", expression)
 		for {
 			indexExplosion := needsExplode(expression)
 			if indexExplosion > 0 {
+				fmt.Printf("%v needs explode at %v\n", expression, indexExplosion)
 				expression = explode(expression, indexExplosion)
+				fmt.Printf("%v after explode\n", expression)
 				expression = split(expression)
+				fmt.Printf("%v after split\n", expression)
 				expression = split(expression)
+				fmt.Printf("%v after split\n", expression)
 			} else {
 				break
 			}
@@ -126,15 +146,20 @@ func doPart1(expressions []string) int {
 	return 0
 }
 
-func doPart2() int {
+func doPart2(expressions []string) int {
 	return 0
 }
 
+var onlyTests = false
+
 func Run(path string) {
-	input := utils.ReadFileAsStringSlice(path, "\n")
-	fmt.Printf("input: %v\n", input)
-	answer1 := doPart1(input)
-	answer2 := doPart2()
-	fmt.Printf("Part 1 answer: %v\n", answer1)
-	fmt.Printf("Part 2 answer: %v\n", answer2)
+	if !onlyTests {
+		input := utils.ReadFileAsStringSlice(path, "\n")
+		answer1 := doPart1(input)
+		answer2 := doPart2(input)
+		fmt.Printf("Part 1 answer: %v\n", answer1)
+		fmt.Printf("Part 2 answer: %v\n", answer2)
+	} else {
+		doTests()
+	}
 }
