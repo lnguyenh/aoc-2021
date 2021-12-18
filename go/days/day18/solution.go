@@ -5,17 +5,11 @@ import (
 	"github.com/lnguyenh/aoc-2021/utils"
 	"math"
 	"regexp"
-	"strings"
 	"unicode"
 )
 
 func add(expression1, expression2 string) string {
-	return strings.Join([]string{
-		"[",
-		expression1,
-		",",
-		expression2,
-		"]"}, "")
+	return "[" + expression1 + "," + expression2 + "]"
 }
 
 func needsExplode(expression string) int {
@@ -30,7 +24,7 @@ func needsExplode(expression string) int {
 		} else if char1 == ']' {
 			stack = stack[:len(stack)-1]
 		} else {
-			if len(stack) >= 5 {
+			if len(stack) > 4 {
 				match := r.MatchString(string(blob[i-1:]))
 				if match {
 					return i - 1
@@ -40,25 +34,6 @@ func needsExplode(expression string) int {
 	}
 
 	return -1
-}
-
-func isBalanced(expression string) int {
-	blob := []rune(expression)
-	var stack []rune
-
-	for i := 0; i < len(blob); i++ {
-		char1 := blob[i]
-		if char1 == '[' {
-			stack = append(stack, char1)
-		} else if char1 == ']' {
-			if len(stack) == 0 {
-				return -1
-			}
-			stack = stack[:len(stack)-1]
-		}
-	}
-
-	return len(stack)
 }
 
 func getMagnitude(expression string) int {
@@ -167,79 +142,64 @@ func split(expression string) string {
 
 func doTests() {
 	expression := "[[[[[[[[[11,[0,[15,5]]],[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]],[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]],[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]],[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]],[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]],[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]],[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]],[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]]"
-	for {
-		originalLength := len(expression)
-
-		shouldAlwaysBeZero := isBalanced(expression)
-		if shouldAlwaysBeZero != 0 {
-			fmt.Println(shouldAlwaysBeZero)
-		}
-
-		indexExplosion := needsExplode(expression)
-		if indexExplosion > 0 {
-			fmt.Printf("%v needs explode at %v\n", expression, indexExplosion)
-			expression = explode(expression, indexExplosion)
-			fmt.Printf("%v after explode\n", expression)
-		} else {
-			expression = split(expression)
-			fmt.Printf("%v after split\n", expression)
-		}
-		if originalLength == len(expression) {
-			break
-		}
-	}
-
+	expression = reduce(expression)
 	fmt.Println(getLeftInt([]rune("wewe23")))
 	fmt.Println(getRightInt([]rune("a25we")))
 }
 
-func doPart1(expressions []string) int {
-	expression := expressions[0]
-	for i, nextExpression := range expressions[1:] {
-		fmt.Println("----------------------------------------------")
-		fmt.Printf("#%v\n", i)
-		expression = add(expression, nextExpression)
-		for {
-			originalLength := len(expression)
+func reduce(expressionToReduce string) string {
+	expression := expressionToReduce
+	for {
+		originalLength := len(expression)
 
-			indexExplosion := needsExplode(expression)
-			if indexExplosion > 0 {
-				fmt.Printf("%v needs explode at %v\n", expression, indexExplosion)
-				expression = explode(expression, indexExplosion)
-				fmt.Printf("%v after explode\n", expression)
-			} else {
-				expression = split(expression)
-				fmt.Printf("%v after split\n", expression)
-			}
+		indexExplosion := needsExplode(expression)
+		if indexExplosion > 0 {
+			// fmt.Printf("%v needs explode at %v\n", expression, indexExplosion)
+			expression = explode(expression, indexExplosion)
+			// fmt.Printf("%v after explode\n", expression)
+		} else {
+			expression = split(expression)
+			// fmt.Printf("%v after split\n", expression)
+		}
 
-			shouldAlwaysBeZero := isBalanced(expression)
-			if shouldAlwaysBeZero != 0 {
-				fmt.Println(shouldAlwaysBeZero)
-			}
-
-			if originalLength == len(expression) {
-				break
-			}
+		if originalLength == len(expression) {
+			break
 		}
 	}
-	fmt.Println(expression)
+	return expression
+}
+
+func doPart1(expressions []string) int {
+	expression := expressions[0]
+	for _, nextExpression := range expressions[1:] {
+		expression = add(expression, nextExpression)
+		expression = reduce(expression)
+
+	}
 	return getMagnitude(expression)
 }
 
 func doPart2(expressions []string) int {
-	return 0
+	asMap := make(map[int]string)
+	magnitudes := make([]int, 0)
+	for i, expression := range expressions {
+		asMap[i] = expression
+	}
+	for key1, expression1 := range asMap {
+		for key2, expression2 := range asMap {
+			if key1 != key2 {
+				magnitudes = append(magnitudes, getMagnitude(reduce(add(expression1, expression2))))
+			}
+		}
+	}
+	return utils.MaxSlice(magnitudes)
+
 }
 
-var onlyTests = false
-
 func Run(path string) {
-	if !onlyTests {
-		input := utils.ReadFileAsStringSlice(path, "\n")
-		answer1 := doPart1(input)
-		answer2 := doPart2(input)
-		fmt.Printf("Part 1 answer: %v\n", answer1)
-		fmt.Printf("Part 2 answer: %v\n", answer2)
-	} else {
-		doTests()
-	}
+	input := utils.ReadFileAsStringSlice(path, "\n")
+	answer1 := doPart1(input)
+	answer2 := doPart2(input)
+	fmt.Printf("Part 1 answer: %v\n", answer1)
+	fmt.Printf("Part 2 answer: %v\n", answer2)
 }
