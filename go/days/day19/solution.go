@@ -115,7 +115,7 @@ func findNormalizations(scanners []*aocScanner, matches []scannerMatch) map[int]
 			}
 			for _, match := range matches {
 				if added[match.refScannerId] && match.targetScannerId == scannerId {
-					// refScanner in the match is linked to scanner 0
+					// refScanner in the match is normalized to scanner 0
 					knownNormalization := normalizations[match.refScannerId]
 					knownScanner := scanners[match.refScannerId]
 					_, newSystem, newOffset := knownScanner.findNeighbouringData(scanner, knownNormalization.system)
@@ -129,7 +129,7 @@ func findNormalizations(scanners []*aocScanner, matches []scannerMatch) map[int]
 					}
 					added[scannerId] = true
 				} else if added[match.targetScannerId] && match.refScannerId == scannerId {
-					// targetScanner in the match is linked to scanner 0
+					// targetScanner in the match is normalized to scanner 0
 					knownNormalization := normalizations[match.targetScannerId]
 					knownScanner := scanners[match.targetScannerId]
 					_, newSystem, newOffset := knownScanner.findNeighbouringData(scanner, knownNormalization.system)

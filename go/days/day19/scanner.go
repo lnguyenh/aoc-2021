@@ -1,7 +1,5 @@
 package day19
 
-import "fmt"
-
 type aocScanner struct {
 	id               int
 	originalBeacons  map[string]aocCoordinates
@@ -79,14 +77,6 @@ func (scanner *aocScanner) populateSystems() {
 		}
 		scanner.beaconsPerSystem[system] = beacons
 	}
-}
-
-func (scanner *aocScanner) print(system int) {
-	fmt.Printf("##########################\n")
-	for key, c := range scanner.beaconsPerSystem[system] {
-		fmt.Printf("System #%v %v %v (System #0: %v)\n", system, key, c, scanner.beaconsPerSystem[0][key])
-	}
-	fmt.Printf("##########################\n")
 }
 
 func (scanner *aocScanner) populateVectors() {
