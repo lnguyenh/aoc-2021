@@ -10,13 +10,13 @@ func getBeaconKey(scannerId, beaconId int) string {
 	return fmt.Sprintf("s%vb%v", scannerId, beaconId)
 }
 
-func textToCoordinates(blob string) [3]int {
+func textToCoordinates(blob string) aocCoordinates {
 	var coordinates [3]int
 	values := strings.Split(blob, ",")
 	for i, value := range values {
 		coordinates[i] = utils.StringToInt(value)
 	}
-	return coordinates
+	return aocCoordinates{x: coordinates[0], y: coordinates[1], z: coordinates[2]}
 }
 
 func createScanner(blob string) *aocScanner {
@@ -26,11 +26,14 @@ func createScanner(blob string) *aocScanner {
 	// initialize
 	scanner := aocScanner{
 		id:              utils.StringToInt(line0[2]),
-		originalBeacons: make(map[string][3]int),
+		originalBeacons: make(map[string]aocCoordinates),
+		vectors:         make(map[string]*[24]*[]aocVector),
 	}
 	for i, line := range lines[1:] {
 		scanner.originalBeacons[getBeaconKey(scanner.id, i)] = textToCoordinates(line)
 	}
+	scanner.populateSystems()
+	scanner.populateVectors()
 	return &scanner
 }
 
