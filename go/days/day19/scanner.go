@@ -21,6 +21,11 @@ type aocVector struct {
 	z int
 }
 
+type aocStandard struct {
+	offset aocVector
+	system int
+}
+
 type scannerMatch struct {
 	refScannerId    int
 	targetScannerId int
@@ -41,9 +46,6 @@ func (scanner *aocScanner) hasEnoughCommonPoints(targetScanner *aocScanner, refS
 	for system := 0; system < 24; system++ {
 		for beaconKey := range scanner.originalBeacons {
 			for targetBeaconKey := range targetScanner.originalBeacons {
-				if targetBeaconKey == "s2b0" && beaconKey == "s0b0" && system == 23 {
-					fmt.Printf("toto")
-				}
 				numCommon := numCommonVectors(
 					scanner.vectors[beaconKey][refSystemId],
 					targetScanner.vectors[targetBeaconKey][system])
@@ -62,9 +64,9 @@ func (scanner *aocScanner) hasEnoughCommonPoints(targetScanner *aocScanner, refS
 
 func addPoints(points map[string]bool, scanner *aocScanner, system int, offset aocVector) {
 	for _, c := range scanner.beaconsPerSystem[system] {
-		x := c.x + offset.x
-		y := c.y + offset.y
-		z := c.z + offset.z
+		x := c.x - offset.x
+		y := c.y - offset.y
+		z := c.z - offset.z
 		points[getCoordinateKey(x, y, z)] = true
 	}
 }

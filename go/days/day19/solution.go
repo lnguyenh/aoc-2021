@@ -68,20 +68,12 @@ func matchKey(a, b int) string {
 	return fmt.Sprintf("%v", keys)
 }
 
-func doPart1(scanners []*aocScanner) int {
+func run(scanners []*aocScanner) (int, int) {
 	matches := make([]scannerMatch, 0)
 	existingMatches := make(map[string]bool)
 
 	systemId := 0
-	refScannerId := 0
-	seen := []int{0}
-	for {
-		if len(seen) == len(scanners) {
-			break
-		}
-
-		refScanner := scanners[refScannerId]
-
+	for refScannerId, refScanner := range scanners {
 		for targetScannerId, targetScanner := range scanners {
 			potentialMatchKey := matchKey(refScannerId, targetScannerId)
 			if refScannerId == targetScannerId || existingMatches[potentialMatchKey] {
@@ -98,38 +90,83 @@ func doPart1(scanners []*aocScanner) int {
 				})
 				systemId = targetSystem
 				existingMatches[potentialMatchKey] = true
-				seen = append(seen, targetScannerId)
-				seen = utils.IntSliceToSet(seen)
+			}
+		}
+	}
+
+	standards := make(map[int]aocStandard)
+	standards[0] = aocStandard{offset: aocVector{}, system: 0}
+	added := make(map[int]bool)
+	added[0] = true
+	for {
+		if len(standards) == len(scanners) {
+			break
+		}
+
+		for scannerId, scanner := range scanners {
+			if added[scannerId] {
+				continue
+			}
+			for _, match := range matches {
+				if added[match.refScannerId] && match.targetScannerId == scannerId {
+					// refScanner in the match is linked to scanner 0
+					standard := standards[match.refScannerId]
+					knownScanner := scanners[match.refScannerId]
+					_, newSystem, newOffset := knownScanner.hasEnoughCommonPoints(scanner, standard.system)
+					standards[scannerId] = aocStandard{
+						offset: aocVector{
+							x: newOffset.x + standard.offset.x,
+							y: newOffset.y + standard.offset.y,
+							z: newOffset.z + standard.offset.z,
+						},
+						system: newSystem,
+					}
+					added[scannerId] = true
+				} else if added[match.targetScannerId] && match.refScannerId == scannerId {
+					// targetScanner in the match is linked to scanner 0
+					standard := standards[match.targetScannerId]
+					knownScanner := scanners[match.targetScannerId]
+					_, newSystem, newOffset := knownScanner.hasEnoughCommonPoints(scanner, standard.system)
+					standards[scannerId] = aocStandard{
+						offset: aocVector{
+							x: newOffset.x + standard.offset.x,
+							y: newOffset.y + standard.offset.y,
+							z: newOffset.z + standard.offset.z,
+						},
+						system: newSystem,
+					}
+					added[scannerId] = true
+				}
 			}
 		}
 
 	}
 
 	points := make(map[string]bool)
-	variableOffset := aocVector{x: 0, y: 0, z: 0}
-	addPoints(points, scanners[0], 0, variableOffset)
-	for _, match := range matches {
-		variableOffset.x = variableOffset.x + match.offset.x
-		variableOffset.y = variableOffset.y + match.offset.y
-		variableOffset.z = variableOffset.z + match.offset.z
-		addPoints(points, scanners[match.targetScannerId], match.targetSystem, variableOffset)
+	for scannerId, standard := range standards {
+		addPoints(points, scanners[scannerId], standard.system, standard.offset)
 	}
 
-	return 0
-}
+	manhattans := make([]int, 0, len(standards))
+	for id1, standard1 := range standards {
+		for id2, standard2 := range standards {
+			if id1 != id2 {
+				manhattans = append(
+					manhattans,
+					utils.IntAbs(standard1.offset.x-standard2.offset.x)+
+						utils.IntAbs(standard1.offset.y-standard2.offset.y)+
+						utils.IntAbs(standard1.offset.z-standard2.offset.z))
+			}
+		}
+	}
 
-func doPart2(scanners []*aocScanner) int {
-	return 0
+	return len(points), utils.MaxSlice(manhattans)
 }
 
 func Run(path string) {
 	input := utils.ReadFileAsStringSlice(path, "\n\n")
 	scanners := createScanners(input)
-	scanners[0].print(1)
-
-	fmt.Printf("scanners (%v): %v\n", len(scanners), scanners)
-	answer1 := doPart1(scanners)
-	answer2 := doPart2(scanners)
+	answer1, answer2 := run(scanners)
 	fmt.Printf("Part 1 answer: %v\n", answer1)
 	fmt.Printf("Part 2 answer: %v\n", answer2)
 }
