@@ -1,5 +1,7 @@
 package day19
 
+import "fmt"
+
 type aocScanner struct {
 	id               int
 	originalBeacons  map[string]aocCoordinates
@@ -49,6 +51,14 @@ func (scanner *aocScanner) populateSystems() {
 	}
 }
 
+func (scanner *aocScanner) print(system int) {
+	fmt.Printf("##########################\n")
+	for key, c := range scanner.beaconsPerSystem[system] {
+		fmt.Printf("System #%v %v %v (System #0: %v)\n", system, key, c, scanner.beaconsPerSystem[0][key])
+	}
+	fmt.Printf("##########################\n")
+}
+
 func (scanner *aocScanner) populateVectors() {
 	for refKey := range scanner.originalBeacons {
 		systemArray := [24]map[string]aocVector{}
@@ -79,51 +89,51 @@ func getCoordinatesInSystem(c aocCoordinates, system int) aocCoordinates {
 	case 0:
 		return aocCoordinates{x: X, y: Y, z: Z}
 	case 1:
-		return aocCoordinates{x: -Z, y: Y, z: X}
-	case 2:
-		return aocCoordinates{x: -X, y: Y, z: -Z}
-	case 3:
-		return aocCoordinates{x: Z, y: Y, z: -X}
-	case 4:
 		return aocCoordinates{x: X, y: -Z, z: Y}
-	case 5:
+	case 2:
 		return aocCoordinates{x: X, y: -Y, z: -Z}
-	case 6:
+	case 3:
 		return aocCoordinates{x: X, y: Z, z: -Y}
-	case 7:
-		return aocCoordinates{x: -Y, y: X, z: Z}
-	case 8:
+	case 4:
 		return aocCoordinates{x: -X, y: -Y, z: Z}
+	case 5:
+		return aocCoordinates{x: -X, y: -Z, z: -Y}
+	case 6:
+		return aocCoordinates{x: -X, y: Y, z: -Z}
+	case 7:
+		return aocCoordinates{x: -X, y: Z, z: Y}
+	case 8:
+		return aocCoordinates{x: Y, y: Z, z: X}
 	case 9:
 		return aocCoordinates{x: Y, y: -X, z: Z}
 	case 10:
-		return aocCoordinates{x: Z, y: X, z: Y}
-	case 11:
-		return aocCoordinates{x: Z, y: -Y, z: X}
-	case 12:
-		return aocCoordinates{x: Z, y: -X, z: -Y}
-	case 13:
-		return aocCoordinates{x: -Z, y: X, z: -Y}
-	case 14:
-		return aocCoordinates{x: Y, y: X, z: -Z}
-	case 15:
-		return aocCoordinates{x: -X, y: Z, z: Y}
-	case 16:
-		return aocCoordinates{x: -Z, y: -X, z: Y}
-	case 17:
-		return aocCoordinates{x: Y, y: Z, z: X}
-	case 18:
-		return aocCoordinates{x: Y, y: -X, z: Z}
-	case 19:
 		return aocCoordinates{x: Y, y: -Z, z: -X}
-	case 20:
-		return aocCoordinates{x: -Z, y: Y, z: X}
-	case 21:
+	case 11:
+		return aocCoordinates{x: Y, y: X, z: -Z}
+	case 12:
 		return aocCoordinates{x: -Y, y: -Z, z: X}
-	case 22:
+	case 13:
+		return aocCoordinates{x: -Y, y: -X, z: -Z}
+	case 14:
 		return aocCoordinates{x: -Y, y: Z, z: -X}
+	case 15:
+		return aocCoordinates{x: -Y, y: X, z: Z}
+	case 16:
+		return aocCoordinates{x: Z, y: X, z: Y}
+	case 17:
+		return aocCoordinates{x: Z, y: -Y, z: X}
+	case 18:
+		return aocCoordinates{x: Z, y: -X, z: -Y}
+	case 19:
+		return aocCoordinates{x: Z, y: Y, z: -X}
+	case 20:
+		return aocCoordinates{x: -Z, y: -X, z: Y}
+	case 21:
+		return aocCoordinates{x: -Z, y: -Y, z: -X}
+	case 22:
+		return aocCoordinates{x: -Z, y: X, z: -Y}
 	case 23:
-		return aocCoordinates{x: X, y: Z, z: -Y}
+		return aocCoordinates{x: -Z, y: Y, z: X}
 	default:
 		return aocCoordinates{x: -9999999, y: -9999999, z: -99999999}
 	}

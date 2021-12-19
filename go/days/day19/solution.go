@@ -68,7 +68,8 @@ func doPart2() int {
 func Run(path string) {
 	input := utils.ReadFileAsStringSlice(path, "\n\n")
 	scanners := createScanners(input)
-	scanners[0].has12CommonPoints(scanners[1])
+	scanners[0].print(1)
+	scanners[0].has12CommonPoints(scanners[2])
 	fmt.Printf("scanners (%v): %v\n", len(scanners), scanners)
 	answer1 := doPart1()
 	answer2 := doPart2()
