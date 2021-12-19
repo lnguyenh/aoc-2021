@@ -69,7 +69,12 @@ func Run(path string) {
 	input := utils.ReadFileAsStringSlice(path, "\n\n")
 	scanners := createScanners(input)
 	scanners[0].print(1)
-	scanners[0].has12CommonPoints(scanners[2])
+	scanners[0].hasEnoughCommonPoints(scanners[1])
+
+	v1 := aocVector{x: 1, y: 2, z: 3}
+	v2 := aocVector{x: 1, y: 2, z: 3}
+	fmt.Printf("are equal: %v", v1 == v2)
+
 	fmt.Printf("scanners (%v): %v\n", len(scanners), scanners)
 	answer1 := doPart1()
 	answer2 := doPart2()

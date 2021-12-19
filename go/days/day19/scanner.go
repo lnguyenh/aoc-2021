@@ -21,20 +21,20 @@ type aocVector struct {
 	z int
 }
 
-func (scanner *aocScanner) has12CommonPoints(targetScanner *aocScanner) bool {
+func (scanner *aocScanner) hasEnoughCommonPoints(targetScanner *aocScanner) bool {
 	for system := 0; system < 24; system++ {
 		for beaconKey := range scanner.originalBeacons {
-			for targetSystem := 0; targetSystem < 24; targetSystem++ {
-				for targetBeaconKey := range targetScanner.originalBeacons {
-					numCommon := numCommonVectors(
-						scanner.vectors[beaconKey][system],
-						targetScanner.vectors[targetBeaconKey][targetSystem])
-					if numCommon >= 6 {
-						return true
-					}
+			for targetBeaconKey := range targetScanner.originalBeacons {
+				if targetBeaconKey == "s2b0" && beaconKey == "s0b0" && system == 23 {
+					fmt.Printf("toto")
+				}
+				numCommon := numCommonVectors(
+					scanner.vectors[beaconKey][system],
+					targetScanner.vectors[targetBeaconKey][0])
+				if numCommon >= 5 {
+					return true
 				}
 			}
-
 		}
 	}
 	return false
@@ -68,14 +68,16 @@ func (scanner *aocScanner) populateVectors() {
 		}
 		scanner.vectors[refKey] = &systemArray
 	}
-	for refKey, refC := range scanner.originalBeacons {
+	for refKey := range scanner.originalBeacons {
 		for system := 0; system < 24; system++ {
-			for targetKey, targetC := range scanner.originalBeacons {
+			for targetKey := range scanner.originalBeacons {
 				if refKey != targetKey {
+					refCInSystem := scanner.beaconsPerSystem[system][refKey]
+					targetCInSystem := scanner.beaconsPerSystem[system][targetKey]
 					scanner.vectors[refKey][system][targetKey] = aocVector{
-						x: targetC.x - refC.x,
-						y: targetC.y - refC.y,
-						z: targetC.z - refC.z,
+						x: targetCInSystem.x - refCInSystem.x,
+						y: targetCInSystem.y - refCInSystem.y,
+						z: targetCInSystem.z - refCInSystem.z,
 					}
 				}
 			}
