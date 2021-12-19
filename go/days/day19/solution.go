@@ -68,10 +68,9 @@ func matchKey(a, b int) string {
 	return fmt.Sprintf("%v", keys)
 }
 
-func run(scanners []*aocScanner) (int, int) {
+func findMatches(scanners []*aocScanner) []scannerMatch {
 	matches := make([]scannerMatch, 0)
 	existingMatches := make(map[string]bool)
-
 	systemId := 0
 	for refScannerId, refScanner := range scanners {
 		for targetScannerId, targetScanner := range scanners {
@@ -79,7 +78,7 @@ func run(scanners []*aocScanner) (int, int) {
 			if refScannerId == targetScannerId || existingMatches[potentialMatchKey] {
 				continue
 			}
-			isAMatch, targetSystem, offset := refScanner.hasEnoughCommonPoints(targetScanner, systemId)
+			isAMatch, targetSystem, offset := refScanner.findNeighbouringData(targetScanner, systemId)
 			if isAMatch {
 				matches = append(matches, scannerMatch{
 					refScannerId:    refScannerId,
@@ -93,45 +92,52 @@ func run(scanners []*aocScanner) (int, int) {
 			}
 		}
 	}
+	return matches
+}
 
-	standards := make(map[int]aocStandard)
-	standards[0] = aocStandard{offset: aocVector{}, system: 0}
+func findNormalizations(scanners []*aocScanner, matches []scannerMatch) map[int]aocNormalization {
+	normalizations := make(map[int]aocNormalization)
+
+	// Initialize with the first scanner
+	normalizations[0] = aocNormalization{offset: aocVector{}, system: 0}
 	added := make(map[int]bool)
 	added[0] = true
+
 	for {
-		if len(standards) == len(scanners) {
+		if len(normalizations) == len(scanners) {
 			break
 		}
 
 		for scannerId, scanner := range scanners {
 			if added[scannerId] {
+				// Already normalized
 				continue
 			}
 			for _, match := range matches {
 				if added[match.refScannerId] && match.targetScannerId == scannerId {
 					// refScanner in the match is linked to scanner 0
-					standard := standards[match.refScannerId]
+					knownNormalization := normalizations[match.refScannerId]
 					knownScanner := scanners[match.refScannerId]
-					_, newSystem, newOffset := knownScanner.hasEnoughCommonPoints(scanner, standard.system)
-					standards[scannerId] = aocStandard{
+					_, newSystem, newOffset := knownScanner.findNeighbouringData(scanner, knownNormalization.system)
+					normalizations[scannerId] = aocNormalization{
 						offset: aocVector{
-							x: newOffset.x + standard.offset.x,
-							y: newOffset.y + standard.offset.y,
-							z: newOffset.z + standard.offset.z,
+							x: newOffset.x + knownNormalization.offset.x,
+							y: newOffset.y + knownNormalization.offset.y,
+							z: newOffset.z + knownNormalization.offset.z,
 						},
 						system: newSystem,
 					}
 					added[scannerId] = true
 				} else if added[match.targetScannerId] && match.refScannerId == scannerId {
 					// targetScanner in the match is linked to scanner 0
-					standard := standards[match.targetScannerId]
+					knownNormalization := normalizations[match.targetScannerId]
 					knownScanner := scanners[match.targetScannerId]
-					_, newSystem, newOffset := knownScanner.hasEnoughCommonPoints(scanner, standard.system)
-					standards[scannerId] = aocStandard{
+					_, newSystem, newOffset := knownScanner.findNeighbouringData(scanner, knownNormalization.system)
+					normalizations[scannerId] = aocNormalization{
 						offset: aocVector{
-							x: newOffset.x + standard.offset.x,
-							y: newOffset.y + standard.offset.y,
-							z: newOffset.z + standard.offset.z,
+							x: newOffset.x + knownNormalization.offset.x,
+							y: newOffset.y + knownNormalization.offset.y,
+							z: newOffset.z + knownNormalization.offset.z,
 						},
 						system: newSystem,
 					}
@@ -139,23 +145,30 @@ func run(scanners []*aocScanner) (int, int) {
 				}
 			}
 		}
-
 	}
+	return normalizations
+}
 
+func run(scanners []*aocScanner) (int, int) {
+	matches := findMatches(scanners)
+	normalizations := findNormalizations(scanners, matches)
+
+	// Part 1: Build a map with all points
 	points := make(map[string]bool)
-	for scannerId, standard := range standards {
-		addPoints(points, scanners[scannerId], standard.system, standard.offset)
+	for scannerId, normalization := range normalizations {
+		addPoints(points, scanners[scannerId], normalization.system, normalization.offset)
 	}
 
-	manhattans := make([]int, 0, len(standards))
-	for id1, standard1 := range standards {
-		for id2, standard2 := range standards {
+	// Part 2: Manhattan
+	manhattans := make([]int, 0, len(normalizations))
+	for id1, normalization1 := range normalizations {
+		for id2, normalization2 := range normalizations {
 			if id1 != id2 {
 				manhattans = append(
 					manhattans,
-					utils.IntAbs(standard1.offset.x-standard2.offset.x)+
-						utils.IntAbs(standard1.offset.y-standard2.offset.y)+
-						utils.IntAbs(standard1.offset.z-standard2.offset.z))
+					utils.IntAbs(normalization1.offset.x-normalization2.offset.x)+
+						utils.IntAbs(normalization1.offset.y-normalization2.offset.y)+
+						utils.IntAbs(normalization1.offset.z-normalization2.offset.z))
 			}
 		}
 	}

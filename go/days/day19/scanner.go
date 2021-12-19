@@ -21,7 +21,7 @@ type aocVector struct {
 	z int
 }
 
-type aocStandard struct {
+type aocNormalization struct {
 	offset aocVector
 	system int
 }
@@ -42,7 +42,7 @@ func getOffset(c1, c2 aocCoordinates) aocVector {
 	}
 }
 
-func (scanner *aocScanner) hasEnoughCommonPoints(targetScanner *aocScanner, refSystemId int) (bool, int, aocVector) {
+func (scanner *aocScanner) findNeighbouringData(targetScanner *aocScanner, refSystemId int) (bool, int, aocVector) {
 	for system := 0; system < 24; system++ {
 		for beaconKey := range scanner.originalBeacons {
 			for targetBeaconKey := range targetScanner.originalBeacons {
