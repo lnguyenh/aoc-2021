@@ -10,6 +10,18 @@ func getBeaconKey(scannerId, beaconId int) string {
 	return fmt.Sprintf("s%vb%v", scannerId, beaconId)
 }
 
+func numCommonVectors(vectors1, vectors2 map[string]aocVector) int {
+	count := 0
+	for _, v1 := range vectors1 {
+		for _, v2 := range vectors2 {
+			if v1 == v2 {
+				count++
+			}
+		}
+	}
+	return count
+}
+
 func textToCoordinates(blob string) aocCoordinates {
 	var coordinates [3]int
 	values := strings.Split(blob, ",")
@@ -27,7 +39,7 @@ func createScanner(blob string) *aocScanner {
 	scanner := aocScanner{
 		id:              utils.StringToInt(line0[2]),
 		originalBeacons: make(map[string]aocCoordinates),
-		vectors:         make(map[string]*[24]*[]aocVector),
+		vectors:         make(map[string]*[24]map[string]aocVector),
 	}
 	for i, line := range lines[1:] {
 		scanner.originalBeacons[getBeaconKey(scanner.id, i)] = textToCoordinates(line)
@@ -56,6 +68,7 @@ func doPart2() int {
 func Run(path string) {
 	input := utils.ReadFileAsStringSlice(path, "\n\n")
 	scanners := createScanners(input)
+	scanners[0].has12CommonPoints(scanners[1])
 	fmt.Printf("scanners (%v): %v\n", len(scanners), scanners)
 	answer1 := doPart1()
 	answer2 := doPart2()
