@@ -3,11 +3,16 @@ package day19
 import (
 	"fmt"
 	"github.com/lnguyenh/aoc-2021/utils"
+	"sort"
 	"strings"
 )
 
 func getBeaconKey(scannerId, beaconId int) string {
 	return fmt.Sprintf("s%vb%v", scannerId, beaconId)
+}
+
+func getCoordinateKey(x, y, z int) string {
+	return fmt.Sprintf("x%vx%vz%x", x, y, z)
 }
 
 func numCommonVectors(vectors1, vectors2 map[string]aocVector) int {
@@ -57,11 +62,63 @@ func createScanners(blobs []string) []*aocScanner {
 	return scanners
 }
 
-func doPart1() int {
+func matchKey(a, b int) string {
+	keys := []int{a, b}
+	sort.Ints(keys)
+	return fmt.Sprintf("%v", keys)
+}
+
+func doPart1(scanners []*aocScanner) int {
+	matches := make([]scannerMatch, 0)
+	existingMatches := make(map[string]bool)
+
+	systemId := 0
+	refScannerId := 0
+	seen := []int{0}
+	for {
+		if len(seen) == len(scanners) {
+			break
+		}
+
+		refScanner := scanners[refScannerId]
+
+		for targetScannerId, targetScanner := range scanners {
+			potentialMatchKey := matchKey(refScannerId, targetScannerId)
+			if refScannerId == targetScannerId || existingMatches[potentialMatchKey] {
+				continue
+			}
+			isAMatch, targetSystem, offset := refScanner.hasEnoughCommonPoints(targetScanner, systemId)
+			if isAMatch {
+				matches = append(matches, scannerMatch{
+					refScannerId:    refScannerId,
+					targetScannerId: targetScannerId,
+					refSystem:       systemId,
+					targetSystem:    targetSystem,
+					offset:          offset,
+				})
+				systemId = targetSystem
+				existingMatches[potentialMatchKey] = true
+				seen = append(seen, targetScannerId)
+				seen = utils.IntSliceToSet(seen)
+			}
+		}
+
+	}
+
+	points := make(map[string]bool)
+	variableOffset := aocVector{x: 0, y: 0, z: 0}
+	addPoints(points, scanners[0], 0, variableOffset)
+	for _, match := range matches {
+		variableOffset.x = variableOffset.x + match.offset.x
+		variableOffset.y = variableOffset.y + match.offset.y
+		variableOffset.z = variableOffset.z + match.offset.z
+		addPoints(points, scanners[match.targetScannerId], match.targetSystem, variableOffset)
+	}
+
 	return 0
 }
 
-func doPart2() int {
+func doPart2(scanners []*aocScanner) int {
 	return 0
 }
 
@@ -69,15 +126,10 @@ func Run(path string) {
 	input := utils.ReadFileAsStringSlice(path, "\n\n")
 	scanners := createScanners(input)
 	scanners[0].print(1)
-	scanners[0].hasEnoughCommonPoints(scanners[1])
-
-	v1 := aocVector{x: 1, y: 2, z: 3}
-	v2 := aocVector{x: 1, y: 2, z: 3}
-	fmt.Printf("are equal: %v", v1 == v2)
 
 	fmt.Printf("scanners (%v): %v\n", len(scanners), scanners)
-	answer1 := doPart1()
-	answer2 := doPart2()
+	answer1 := doPart1(scanners)
+	answer2 := doPart2(scanners)
 	fmt.Printf("Part 1 answer: %v\n", answer1)
 	fmt.Printf("Part 2 answer: %v\n", answer2)
 }

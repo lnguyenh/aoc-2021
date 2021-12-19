@@ -21,7 +21,23 @@ type aocVector struct {
 	z int
 }
 
-func (scanner *aocScanner) hasEnoughCommonPoints(targetScanner *aocScanner) bool {
+type scannerMatch struct {
+	refScannerId    int
+	targetScannerId int
+	refSystem       int
+	targetSystem    int
+	offset          aocVector
+}
+
+func getOffset(c1, c2 aocCoordinates) aocVector {
+	return aocVector{
+		x: c2.x - c1.x,
+		y: c2.y - c1.y,
+		z: c2.z - c1.z,
+	}
+}
+
+func (scanner *aocScanner) hasEnoughCommonPoints(targetScanner *aocScanner, refSystemId int) (bool, int, aocVector) {
 	for system := 0; system < 24; system++ {
 		for beaconKey := range scanner.originalBeacons {
 			for targetBeaconKey := range targetScanner.originalBeacons {
@@ -29,16 +45,28 @@ func (scanner *aocScanner) hasEnoughCommonPoints(targetScanner *aocScanner) bool
 					fmt.Printf("toto")
 				}
 				numCommon := numCommonVectors(
-					scanner.vectors[beaconKey][system],
-					targetScanner.vectors[targetBeaconKey][0])
-				if numCommon >= 5 {
-					return true
+					scanner.vectors[beaconKey][refSystemId],
+					targetScanner.vectors[targetBeaconKey][system])
+				if numCommon >= 11 {
+					offset := getOffset(
+						scanner.beaconsPerSystem[refSystemId][beaconKey],
+						targetScanner.beaconsPerSystem[system][targetBeaconKey],
+					)
+					return true, system, offset
 				}
 			}
 		}
 	}
-	return false
+	return false, -1, aocVector{}
+}
 
+func addPoints(points map[string]bool, scanner *aocScanner, system int, offset aocVector) {
+	for _, c := range scanner.beaconsPerSystem[system] {
+		x := c.x + offset.x
+		y := c.y + offset.y
+		z := c.z + offset.z
+		points[getCoordinateKey(x, y, z)] = true
+	}
 }
 
 func (scanner *aocScanner) populateSystems() {
