@@ -10,13 +10,15 @@ Input files are expected to be located in the "inputs" folder under the correct 
 
 ## Running the Go solutions
 
-In order to get the solution for day 01 and for the input file  "inputs/01/input.txt", run the following:
+- First you need to install Go and have it available in your path so that it is possible to call the go command in a terminal
+- The, to get the solution for `day01` and for the input file  `inputs/01/input.txt`, run the following:
 
 ```
 cd go
 go run cmd/aoc.go input 01
-
-# Alternatively, to solve today's problem with the corresponding input.txt:
+```
+Alternatively, to solve today's problem with the corresponding input `input.txt`:
+```
 go run cmd/aoc.go input
 ```
 
