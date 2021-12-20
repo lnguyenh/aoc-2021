@@ -19,6 +19,7 @@ type aocImage struct {
 func (image *aocImage) applyOnce() {
 	result := make(map[string]rune)
 
+	// Convert all points, and one row/column extra all around
 	minI, maxI, minJ, maxJ := image.minI, image.maxI, image.minJ, image.maxJ
 	for i := minI - 1; i <= maxI+1; i++ {
 		for j := minJ - 1; j <= maxJ+1; j++ {
@@ -32,7 +33,7 @@ func (image *aocImage) applyOnce() {
 	image.minJ--
 	image.maxI++
 	image.maxJ++
-	image.infinityValue = result[getKey(minI-1, minJ-1)]
+	image.infinityValue = result[getKey(image.minI, image.minJ)]
 	image.points = result
 }
 

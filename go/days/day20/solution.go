@@ -5,26 +5,24 @@ import (
 	"github.com/lnguyenh/aoc-2021/utils"
 )
 
-func doPart1(image *aocImage) int {
+func run(image *aocImage) (int, int) {
+	// Part 1
 	image.applyOnce()
 	image.applyOnce()
-	return image.countOnes()
-}
+	answer1 := image.countOnes()
 
-func doPart2(image *aocImage) int {
-	for i := 0; i < 50; i++ {
+	// Part2, do it 48 more times
+	for i := 2; i < 50; i++ {
 		image.applyOnce()
 	}
-	return image.countOnes()
+	answer2 := image.countOnes()
+	return answer1, answer2
 }
 
 func Run(path string) {
 	input := utils.ReadFileAsStringSlice(path, "\n\n")
-
 	image := getImage(input)
-	image2 := getImage(input)
-	answer1 := doPart1(image)
-	answer2 := doPart2(image2)
+	answer1, answer2 := run(image)
 	fmt.Printf("Part 1 answer: %v\n", answer1)
 	fmt.Printf("Part 2 answer: %v\n", answer2)
 }
