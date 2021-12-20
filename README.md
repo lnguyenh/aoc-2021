@@ -1,7 +1,7 @@
 # Advent of code 2021
 
 ## About
-OK, let's try another year!
+OK, let's do this another year! This time, I will use `Advent of Code` to learn Go. Let's... go!
 
 https://adventofcode.com/2021
 
@@ -21,7 +21,7 @@ go run cmd/aoc.go input
 ```
 
 ## Understanding the solutions
-A good starting point is to check first the `doPart1()` or `doPart2()` functions for each day and follow the code from there.
+A good starting point is to check first the `solution.go` file for a specific day, look at the  `Run()` function for each day and follow the code from there.
 
 ## Adding a new Go solution
 - Create a new input directory in the `inputs` directory, typically with a `test.txt` and a `input.txt` file as provided on https://adventofcode.com/
