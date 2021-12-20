@@ -6,7 +6,7 @@ OK, let's do this another year! This time, I will use `Advent of Code` to learn 
 https://adventofcode.com/2021
 
 ## Setup
-Input files are expected to be located in the "inputs" folder under the correct folder for the day, and to have the extension ".txt". Example "inputs/01/test.txt"
+Input files are expected to be located in the `inputs` folder under the correct folder for the day, and to have the extension `.txt`. Example `inputs/01/test.txt`
 
 ## Running the Go solutions
 
