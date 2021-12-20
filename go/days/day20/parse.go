@@ -39,6 +39,5 @@ func getImage(blob string) map[string]rune {
 			result[key] = c
 		}
 	}
-	pad(result)
 	return result
 }
