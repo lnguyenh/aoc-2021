@@ -3,7 +3,7 @@ package day20
 import (
 	"fmt"
 	"github.com/lnguyenh/aoc-2021/utils"
-	"regexp"
+	"strings"
 )
 
 type aocImage struct {
@@ -107,7 +107,6 @@ func getKey(i, j int) string {
 }
 
 func keyToIJ(key string) (int, int) {
-	r, _ := regexp.Compile("^(-?\\d+)Z(-?\\d+)")
-	matches := r.FindStringSubmatch(key)
-	return utils.StringToInt(matches[1]), utils.StringToInt(matches[2])
+	matches := strings.Split(key, "Z")
+	return utils.StringToInt(matches[0]), utils.StringToInt(matches[1])
 }
