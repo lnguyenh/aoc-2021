@@ -22,7 +22,7 @@ func getAlgorithm(blob string) []rune {
 	return result
 }
 
-func getImage(blob string) map[string]rune {
+func getPoints(blob string) map[string]rune {
 	result := make(map[string]rune)
 	for i, line := range strings.Split(blob, "\n") {
 		for j, char := range []rune(line) {
@@ -40,4 +40,16 @@ func getImage(blob string) map[string]rune {
 		}
 	}
 	return result
+}
+
+func getImage(input []string) *aocImage {
+	return &aocImage{
+		algorithm:     getAlgorithm(input[0]),
+		points:        getPoints(input[1]),
+		infinityValue: '0',
+		minI:          0,
+		minJ:          0,
+		maxI:          len(strings.Split(input[1], "\n")),
+		maxJ:          len(strings.Split(input[1], "\n")[0]),
+	}
 }

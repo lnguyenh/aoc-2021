@@ -21,16 +21,8 @@ func doPart2(image *aocImage) int {
 func Run(path string) {
 	input := utils.ReadFileAsStringSlice(path, "\n\n")
 
-	image := &aocImage{
-		algorithm:     getAlgorithm(input[0]),
-		points:        getImage(input[1]),
-		infinityValue: '0',
-	}
-	image2 := &aocImage{
-		algorithm:     getAlgorithm(input[0]),
-		points:        getImage(input[1]),
-		infinityValue: '0',
-	}
+	image := getImage(input)
+	image2 := getImage(input)
 	answer1 := doPart1(image)
 	answer2 := doPart2(image2)
 	fmt.Printf("Part 1 answer: %v\n", answer1)

@@ -10,45 +10,29 @@ type aocImage struct {
 	points        map[string]rune
 	algorithm     []rune
 	infinityValue rune
+	minI          int
+	maxI          int
+	minJ          int
+	maxJ          int
 }
 
 func (image *aocImage) applyOnce() {
 	result := make(map[string]rune)
 
-	// vanilla run on base image
-	for key := range image.points {
-		result[key] = image.algorithm[getAlgorithmIndex(image.points, key, image.infinityValue)]
+	minI, maxI, minJ, maxJ := image.minI, image.maxI, image.minJ, image.maxJ
+	for i := minI - 1; i <= maxI+1; i++ {
+		for j := minJ - 1; j <= maxJ+1; j++ {
+			key := getKey(i, j)
+			result[key] = image.algorithm[getAlgorithmIndex(image.points, key, image.infinityValue)]
+		}
 	}
 
-	// continue until we have the same character 3 character wide around the image
-	for {
-		canStop, newInfinityValue := isReadyForInfinite(result)
-		if canStop {
-			image.infinityValue = newInfinityValue
-			break
-		}
-
-		// continue once around
-		minI, maxI, minJ, maxJ := getMinMax(result)
-		for j := minJ - 1; j <= maxJ+1; j++ {
-			key := getKey(minI-1, j)
-			result[key] = image.algorithm[getAlgorithmIndex(image.points, key, image.infinityValue)]
-		}
-		for j := minJ - 1; j <= maxJ+1; j++ {
-			key := getKey(maxI+1, j)
-			result[key] = image.algorithm[getAlgorithmIndex(image.points, key, image.infinityValue)]
-		}
-		for i := minI - 1; i <= maxI+1; i++ {
-			key := getKey(i, minJ-1)
-			result[key] = image.algorithm[getAlgorithmIndex(image.points, key, image.infinityValue)]
-		}
-		for i := minI - 1; i <= maxI+1; i++ {
-			key := getKey(i, maxJ+1)
-			result[key] = image.algorithm[getAlgorithmIndex(image.points, key, image.infinityValue)]
-		}
-
-	}
-
+	//printImage(result)
+	image.minI--
+	image.minJ--
+	image.maxI++
+	image.maxJ++
+	image.infinityValue = result[getKey(minI-1, minJ-1)]
 	image.points = result
 }
 
@@ -76,25 +60,6 @@ func (image *aocImage) countOnes() int {
 		}
 	}
 	return counter
-}
-
-func isReadyForInfinite(points map[string]rune) (bool, rune) {
-	minI, maxI, minJ, maxJ := getMinMax(points)
-	margin := 3
-	refChar := points[getKey(minI, minJ)]
-	for i := minI; i <= maxJ; i++ {
-		for j := minJ; j <= maxJ; j++ {
-			if minI+margin < i && i < maxI-margin &&
-				minJ+margin < j && j < maxJ-margin {
-				continue
-			}
-			testChar := points[getKey(i, j)]
-			if testChar != refChar {
-				return false, refChar
-			}
-		}
-	}
-	return true, refChar
 }
 
 func getVal(image map[string]rune, i, j int, fallback rune) rune {
