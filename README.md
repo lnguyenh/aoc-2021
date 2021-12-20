@@ -23,6 +23,10 @@ Alternatively, to solve today's problem with the corresponding input `input.txt`
 ```
 go run cmd/aoc.go input
 ```
+Note that the last parameter in the command above corresponds to the file name without the extension. So for example if you want to run the solution for the file `test.txt` you can run:
+```
+go run cmd/aoc.go test
+```
 
 ## Understanding the solutions
 A good starting point is to check first the `solution.go` file for a specific day, look at the  `Run()` function for each day and follow the code from there.
