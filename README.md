@@ -1,7 +1,7 @@
 # Advent of code 2021
 
 ## About
-OK, let's do this another year! This time, I will use `Advent of Code` to learn Go. Let's... go!
+OK, let's do this another year! This year, I will use `Advent of Code` to learn [Go](https://go.dev/). Let's... go!
 
 https://adventofcode.com/2021
 
@@ -10,8 +10,8 @@ Input files are expected to be located in the `inputs` folder under the correct 
 
 ## Running the Go solutions
 
-- First you need to install Go and have it available in your path so that it is possible to call the go command in a terminal
-- The, to get the solution for `day01` and for the input file  `inputs/01/input.txt`, run the following:
+- Make sure that Go is installed (instructions [here](https://go.dev/doc/install)) and that it is possible to call the `go` command in a terminal
+- Then, to get the solution for `day01` and for the input file  `inputs/01/input.txt`, run the following:
 
 ```
 cd go
