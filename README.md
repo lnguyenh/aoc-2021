@@ -1,7 +1,7 @@
 # Advent of code 2021
 
 ## About
-OK, here we go again! This year, I will use `Advent of Code` to learn [Go](https://go.dev/). Let's... go!
+OK, here we go again! This year, I'll use `Advent of Code` to learn [Go](https://go.dev/). Let's... go!
 
 https://adventofcode.com/2021
 
