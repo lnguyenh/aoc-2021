@@ -96,6 +96,7 @@ func (r *gameRepresentation) playOnce() [3]gameRepresentation {
 			}
 		}
 	} else {
+		// Keep rolling
 		if r.currentPlayer == 0 {
 			return [3]gameRepresentation{
 				{
@@ -157,7 +158,6 @@ func (r *gameRepresentation) playOnce() [3]gameRepresentation {
 				},
 			}
 		}
-
 	}
 }
 
@@ -167,9 +167,9 @@ func (game *aocGame2) step() {
 		newRs := representation.playOnce()
 		for _, r := range newRs {
 			if r.score1 >= 21 {
-				game.winner1Count += 1
+				game.winner1Count += count
 			} else if r.score2 >= 21 {
-				game.winner2Count += 1
+				game.winner2Count += count
 			} else {
 				newScoreCounts[r] += count
 			}
