@@ -96,7 +96,7 @@ func (r *gameRepresentation) playOnce() [3]gameRepresentation {
 			}
 		}
 	} else {
-		// Keep rolling
+		// Keep rolling and just update the temporary roll accumulator and count
 		if r.currentPlayer == 0 {
 			return [3]gameRepresentation{
 				{
