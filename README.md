@@ -37,3 +37,10 @@ A good starting point is to check first the `solution.go` file for a specific da
 - Add a key/value pair in the `dayFunctions` map in the file `go/days/days.go`
 
 Voila, start coding in `go/days/[your new day]/solution.go`!
+
+## Lessons learnt
+- use key/value structures whenever possible, especially if the problem seems very memory intensive
+- next time I see a tree search with weights, think "Dijkstra"
+- Python things that I could use in the future:
+  - itertools "cycle" (see [here](https://github.com/carlskeide/advent-of-code/blob/main/2021/task21.py))
+  - "yield from" (see [here](https://github.com/carlskeide/advent-of-code/blob/main/2021/task12.py))
