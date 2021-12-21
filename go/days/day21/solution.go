@@ -26,6 +26,8 @@ func doPart2(startingPositions []int) int {
 		position1:     startingPositions[0],
 		position2:     startingPositions[1],
 		currentPlayer: 0,
+		rollCount:     0,
+		rollTmpValue:  0,
 	}] = 1
 	game.playCompleteGame()
 	return utils.MaxSlice([]int{game.winner1Count, game.winner2Count})

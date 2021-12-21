@@ -12,6 +12,8 @@ type gameRepresentation struct {
 	position1     int
 	position2     int
 	currentPlayer int
+	rollCount     int
+	rollTmpValue  int
 }
 
 func getNewPosition(currentPosition, rollValue int) int {
@@ -23,60 +25,139 @@ func getNewPosition(currentPosition, rollValue int) int {
 }
 
 func (r *gameRepresentation) playOnce() [3]gameRepresentation {
-	if r.currentPlayer == 0 {
-		positionA := getNewPosition(r.position1, 1)
-		positionB := getNewPosition(r.position1, 2)
-		positionC := getNewPosition(r.position1, 3)
-		return [3]gameRepresentation{
-			{
-				score1:        r.score1 + positionA,
-				score2:        r.score2,
-				position1:     positionA,
-				position2:     r.position2,
-				currentPlayer: 1,
-			},
-			{
-				score1:        r.score1 + positionB,
-				score2:        r.score2,
-				position1:     positionB,
-				position2:     r.position2,
-				currentPlayer: 1,
-			},
-			{
-				score1:        r.score1 + positionC,
-				score2:        r.score2,
-				position1:     positionC,
-				position2:     r.position2,
-				currentPlayer: 1,
-			},
+	rollCount := r.rollCount + 1
+	if rollCount > 2 {
+		// move pawns and reset rollCount
+		if r.currentPlayer == 0 {
+			positionA := getNewPosition(r.position1, r.rollTmpValue+1)
+			positionB := getNewPosition(r.position1, r.rollTmpValue+2)
+			positionC := getNewPosition(r.position1, r.rollTmpValue+3)
+			return [3]gameRepresentation{
+				{
+					score1:        r.score1 + positionA,
+					score2:        r.score2,
+					position1:     positionA,
+					position2:     r.position2,
+					currentPlayer: 1,
+					rollCount:     0,
+					rollTmpValue:  0,
+				},
+				{
+					score1:        r.score1 + positionB,
+					score2:        r.score2,
+					position1:     positionB,
+					position2:     r.position2,
+					currentPlayer: 1,
+					rollCount:     0,
+					rollTmpValue:  0,
+				},
+				{
+					score1:        r.score1 + positionC,
+					score2:        r.score2,
+					position1:     positionC,
+					position2:     r.position2,
+					currentPlayer: 1,
+					rollCount:     0,
+					rollTmpValue:  0,
+				},
+			}
+		} else {
+			positionA := getNewPosition(r.position2, r.rollTmpValue+1)
+			positionB := getNewPosition(r.position2, r.rollTmpValue+2)
+			positionC := getNewPosition(r.position2, r.rollTmpValue+3)
+			return [3]gameRepresentation{
+				{
+					score1:        r.score1,
+					score2:        r.score2 + positionA,
+					position1:     r.position1,
+					position2:     positionA,
+					currentPlayer: 0,
+					rollCount:     0,
+					rollTmpValue:  0,
+				},
+				{
+					score1:        r.score1,
+					score2:        r.score2 + positionB,
+					position1:     r.position1,
+					position2:     positionB,
+					currentPlayer: 0,
+					rollCount:     0,
+					rollTmpValue:  0,
+				},
+				{
+					score1:        r.score1,
+					score2:        r.score2 + positionC,
+					position1:     r.position1,
+					position2:     positionC,
+					currentPlayer: 0,
+					rollCount:     0,
+					rollTmpValue:  0,
+				},
+			}
 		}
 	} else {
-		positionA := getNewPosition(r.position2, 1)
-		positionB := getNewPosition(r.position2, 2)
-		positionC := getNewPosition(r.position2, 3)
-		return [3]gameRepresentation{
-			{
-				score1:        r.score1,
-				score2:        r.score2 + positionA,
-				position1:     r.position1,
-				position2:     positionA,
-				currentPlayer: 0,
-			},
-			{
-				score1:        r.score1,
-				score2:        r.score2 + positionB,
-				position1:     r.position1,
-				position2:     positionB,
-				currentPlayer: 0,
-			},
-			{
-				score1:        r.score1,
-				score2:        r.score2 + positionC,
-				position1:     r.position1,
-				position2:     positionC,
-				currentPlayer: 0,
-			},
+		if r.currentPlayer == 0 {
+			return [3]gameRepresentation{
+				{
+					score1:        r.score1,
+					score2:        r.score2,
+					position1:     r.position1,
+					position2:     r.position2,
+					currentPlayer: r.currentPlayer,
+					rollCount:     rollCount,
+					rollTmpValue:  r.rollTmpValue + 1,
+				},
+				{
+					score1:        r.score1,
+					score2:        r.score2,
+					position1:     r.position1,
+					position2:     r.position2,
+					currentPlayer: r.currentPlayer,
+					rollCount:     rollCount,
+					rollTmpValue:  r.rollTmpValue + 2,
+				},
+				{
+					score1:        r.score1,
+					score2:        r.score2,
+					position1:     r.position1,
+					position2:     r.position2,
+					currentPlayer: r.currentPlayer,
+					rollCount:     rollCount,
+					rollTmpValue:  r.rollTmpValue + 3,
+				},
+			}
+		} else {
+			return [3]gameRepresentation{
+				{
+					score1:        r.score1,
+					score2:        r.score2,
+					position1:     r.position1,
+					position2:     r.position2,
+					currentPlayer: r.currentPlayer,
+					rollCount:     rollCount,
+					rollTmpValue:  r.rollTmpValue + 1,
+				},
+				{
+					score1:        r.score1,
+					score2:        r.score2,
+					position1:     r.position1,
+					position2:     r.position2,
+					currentPlayer: r.currentPlayer,
+					rollCount:     rollCount,
+					rollTmpValue:  r.rollTmpValue + 2,
+				},
+				{
+					score1:        r.score1,
+					score2:        r.score2,
+					position1:     r.position1,
+					position2:     r.position2,
+					currentPlayer: r.currentPlayer,
+					rollCount:     rollCount,
+					rollTmpValue:  r.rollTmpValue + 3,
+				},
+			}
 		}
+
 	}
 }
 
