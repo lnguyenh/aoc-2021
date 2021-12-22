@@ -91,13 +91,21 @@ func (s *aocSpace) add(newC *aocCuboid) {
 					s.add(createCuboid(oldC.xMin, newC.xMax, newC.yMin, newC.yMax, oldC.zMax+1, newC.zMax, true))
 					s.add(createCuboid(oldC.xMin, newC.xMax, newC.yMin, oldC.yMin-1, newC.zMin, oldC.zMax, true))
 				} else if newC.t1.in(oldC) {
-
+					s.add(createCuboid(newC.xMin, oldC.xMin-1, newC.yMin, newC.yMax, newC.zMin, newC.zMax, true))
+					s.add(createCuboid(oldC.xMin, newC.xMax, newC.yMin, newC.yMax, newC.zMin, oldC.zMax-1, true))
+					s.add(createCuboid(oldC.xMin, newC.xMax, oldC.yMax+1, newC.yMax, oldC.zMax, newC.zMax, true))
 				} else if newC.t2.in(oldC) {
-
+					s.add(createCuboid(oldC.xMax+1, newC.xMax, newC.yMin, newC.yMax, newC.zMin, newC.zMax, true))
+					s.add(createCuboid(newC.xMin, oldC.xMax, newC.yMin, newC.yMax, newC.zMin, oldC.zMax-1, true))
+					s.add(createCuboid(newC.xMin, oldC.xMax, oldC.yMax+1, newC.yMax, oldC.zMax, newC.zMax, true))
 				} else if newC.t3.in(oldC) {
-
+					s.add(createCuboid(oldC.xMax+1, newC.xMax, newC.yMin, newC.yMax, newC.zMin, newC.zMax, true))
+					s.add(createCuboid(newC.xMin, oldC.xMax, newC.yMin, newC.yMax, newC.zMin, oldC.zMin-1, true))
+					s.add(createCuboid(newC.xMin, oldC.xMax, newC.yMin, oldC.yMin-1, oldC.zMin, newC.zMax, true))
 				} else if newC.t4.in(oldC) {
-
+					s.add(createCuboid(newC.xMin, oldC.xMin-1, newC.yMin, newC.yMax, newC.zMin, newC.zMax, true))
+					s.add(createCuboid(oldC.xMin, newC.xMax, newC.yMin, newC.yMax, newC.zMin, oldC.zMin-1, true))
+					s.add(createCuboid(oldC.xMin, newC.xMax, newC.yMin, oldC.yMin-1, oldC.zMin, newC.zMax, true))
 				}
 			case 2:
 				if newC.b1.in(oldC) && newC.b2.in(oldC) {
