@@ -14,7 +14,7 @@ type aocSpace struct {
 
 func (s *aocSpace) getVolume() int {
 	volume := 0
-	for _, cuboid := range s.cuboids {
+	for _, cuboid := range s.cleans {
 		volume += cuboid.getVolume()
 	}
 	return volume
@@ -78,78 +78,184 @@ func (s *aocSpace) add(newC *aocCuboid) {
 					s.add(createCuboid(newC.xMin, oldC.xMin-1, newC.yMin, newC.yMax, newC.zMin, newC.zMax, true))
 					s.add(createCuboid(oldC.xMin, newC.xMax, newC.yMin, newC.yMax, oldC.zMax+1, newC.zMax, true))
 					s.add(createCuboid(oldC.xMin, newC.xMax, oldC.yMax+1, newC.yMax, newC.zMin, oldC.zMax, true))
+					return
 				} else if newC.b2.in(oldC) {
 					s.add(createCuboid(oldC.xMax+1, newC.xMax, newC.yMin, newC.yMax, newC.zMin, newC.zMax, true))
 					s.add(createCuboid(newC.xMin, oldC.xMax, newC.yMin, newC.yMax, oldC.zMax+1, newC.zMax, true))
 					s.add(createCuboid(newC.xMin, oldC.xMax, oldC.yMax+1, newC.yMax, newC.zMin, oldC.zMax, true))
+					return
 				} else if newC.b3.in(oldC) {
 					s.add(createCuboid(oldC.xMax+1, newC.xMax, newC.yMin, newC.yMax, newC.zMin, newC.zMax, true))
 					s.add(createCuboid(newC.xMin, oldC.xMax, newC.yMin, newC.yMax, oldC.zMax+1, newC.zMax, true))
 					s.add(createCuboid(newC.xMin, oldC.xMax, newC.yMin, oldC.yMin-1, newC.zMin, oldC.zMax, true))
+					return
 				} else if newC.b4.in(oldC) {
 					s.add(createCuboid(newC.xMin, oldC.xMin-1, newC.yMin, newC.yMax, newC.zMin, newC.zMax, true))
 					s.add(createCuboid(oldC.xMin, newC.xMax, newC.yMin, newC.yMax, oldC.zMax+1, newC.zMax, true))
 					s.add(createCuboid(oldC.xMin, newC.xMax, newC.yMin, oldC.yMin-1, newC.zMin, oldC.zMax, true))
+					return
 				} else if newC.t1.in(oldC) {
 					s.add(createCuboid(newC.xMin, oldC.xMin-1, newC.yMin, newC.yMax, newC.zMin, newC.zMax, true))
 					s.add(createCuboid(oldC.xMin, newC.xMax, newC.yMin, newC.yMax, newC.zMin, oldC.zMax-1, true))
 					s.add(createCuboid(oldC.xMin, newC.xMax, oldC.yMax+1, newC.yMax, oldC.zMax, newC.zMax, true))
+					return
 				} else if newC.t2.in(oldC) {
 					s.add(createCuboid(oldC.xMax+1, newC.xMax, newC.yMin, newC.yMax, newC.zMin, newC.zMax, true))
 					s.add(createCuboid(newC.xMin, oldC.xMax, newC.yMin, newC.yMax, newC.zMin, oldC.zMax-1, true))
 					s.add(createCuboid(newC.xMin, oldC.xMax, oldC.yMax+1, newC.yMax, oldC.zMax, newC.zMax, true))
+					return
 				} else if newC.t3.in(oldC) {
 					s.add(createCuboid(oldC.xMax+1, newC.xMax, newC.yMin, newC.yMax, newC.zMin, newC.zMax, true))
 					s.add(createCuboid(newC.xMin, oldC.xMax, newC.yMin, newC.yMax, newC.zMin, oldC.zMin-1, true))
 					s.add(createCuboid(newC.xMin, oldC.xMax, newC.yMin, oldC.yMin-1, oldC.zMin, newC.zMax, true))
+					return
 				} else if newC.t4.in(oldC) {
 					s.add(createCuboid(newC.xMin, oldC.xMin-1, newC.yMin, newC.yMax, newC.zMin, newC.zMax, true))
 					s.add(createCuboid(oldC.xMin, newC.xMax, newC.yMin, newC.yMax, newC.zMin, oldC.zMin-1, true))
 					s.add(createCuboid(oldC.xMin, newC.xMax, newC.yMin, oldC.yMin-1, oldC.zMin, newC.zMax, true))
+					return
 				}
 			case 2:
 				if newC.b1.in(oldC) && newC.b2.in(oldC) {
 					s.add(createCuboid(newC.xMin, newC.xMax, newC.yMin, newC.yMax, oldC.zMax+1, newC.zMax, true))
 					s.add(createCuboid(newC.xMin, newC.xMax, oldC.yMax+1, newC.yMax, newC.zMin, oldC.zMax, true))
+					return
 				} else if newC.b2.in(oldC) && newC.b3.in(oldC) {
 					s.add(createCuboid(newC.xMin, newC.xMax, newC.yMin, newC.yMax, oldC.zMax+1, newC.zMax, true))
 					s.add(createCuboid(oldC.xMax+1, oldC.xMax, newC.yMin, newC.yMax, newC.zMin, oldC.zMax, true))
+					return
 				} else if newC.b3.in(oldC) && newC.b4.in(oldC) {
 					s.add(createCuboid(newC.xMin, newC.xMax, newC.yMin, newC.yMax, oldC.zMax+1, newC.zMax, true))
 					s.add(createCuboid(newC.xMin, newC.xMax, newC.yMin, oldC.yMin-1, newC.zMin, oldC.zMax, true))
+					return
 				} else if newC.b4.in(oldC) && newC.b1.in(oldC) {
 					s.add(createCuboid(newC.xMin, newC.xMax, newC.yMin, newC.yMax, oldC.zMax+1, newC.zMax, true))
 					s.add(createCuboid(newC.xMin, oldC.xMin-1, newC.yMin, newC.xMax, newC.zMin, oldC.zMax, true))
+					return
 				} else if newC.t1.in(oldC) && newC.t2.in(oldC) {
 					s.add(createCuboid(newC.xMin, newC.xMax, newC.yMin, newC.yMax, newC.zMin, oldC.zMin-1, true))
 					s.add(createCuboid(newC.xMin, newC.xMax, oldC.yMax+1, newC.yMax, oldC.zMin, newC.zMax, true))
+					return
 				} else if newC.t2.in(oldC) && newC.t3.in(oldC) {
 					s.add(createCuboid(newC.xMin, newC.xMax, newC.yMin, newC.yMax, newC.zMin, oldC.zMin-1, true))
 					s.add(createCuboid(oldC.xMax+1, newC.xMax, newC.yMin, newC.yMax, oldC.zMin, newC.zMax, true))
+					return
 				} else if newC.t3.in(oldC) && newC.t4.in(oldC) {
 					s.add(createCuboid(newC.xMin, newC.xMax, newC.yMin, newC.yMax, newC.zMin, oldC.zMin-1, true))
 					s.add(createCuboid(newC.xMin, newC.xMax, newC.yMin, oldC.yMin-1, oldC.zMin, newC.zMax, true))
+					return
 				} else if newC.t4.in(oldC) && newC.t1.in(oldC) {
 					s.add(createCuboid(newC.xMin, newC.xMax, newC.yMin, newC.yMax, newC.zMin, oldC.zMin-1, true))
 					s.add(createCuboid(newC.xMin, oldC.xMin-1, newC.yMin, newC.yMax, oldC.zMin, newC.zMax, true))
+					return
 				}
 			case 4:
 				if newC.b1.in(oldC) && newC.b2.in(oldC) && newC.t1.in(oldC) && newC.t2.in(oldC) {
 					s.add(createCuboid(newC.xMin, newC.xMax, oldC.yMax+1, newC.yMax, newC.zMin, newC.zMax, true))
+					return
 				} else if newC.b2.in(oldC) && newC.t2.in(oldC) && newC.b3.in(oldC) && newC.t3.in(oldC) {
 					s.add(createCuboid(oldC.xMax+1, newC.xMax, newC.yMin, newC.yMax, newC.zMin, newC.zMax, true))
+					return
 				} else if newC.b4.in(oldC) && newC.t4.in(oldC) && newC.b3.in(oldC) && newC.t3.in(oldC) {
 					s.add(createCuboid(newC.xMin, newC.xMax, newC.yMin, oldC.yMin-1, newC.zMin, newC.zMax, true))
+					return
 				} else if newC.b4.in(oldC) && newC.t4.in(oldC) && newC.b1.in(oldC) && newC.t1.in(oldC) {
 					s.add(createCuboid(newC.xMin, oldC.xMin-1, newC.yMin, newC.yMax, newC.zMin, newC.zMax, true))
+					return
 				} else if newC.b1.in(oldC) && newC.b2.in(oldC) && newC.b3.in(oldC) && newC.b4.in(oldC) {
 					s.add(createCuboid(newC.xMin, oldC.xMax, newC.yMin, newC.yMax, oldC.zMax+1, newC.zMax, true))
+					return
 				} else if newC.t1.in(oldC) && newC.t2.in(oldC) && newC.t3.in(oldC) && newC.t4.in(oldC) {
 					s.add(createCuboid(newC.xMin, oldC.xMax, newC.yMin, newC.yMax, newC.zMin, oldC.zMin-1, true))
+					return
 				}
 			}
 		} else {
 			// deal with oldC in newC partially
+			switch len(oldCPointsInNewC) {
+			case 2:
+				if oldC.b1.in(newC) && oldC.b2.in(newC) {
+					s.add(createCuboid(oldC.xMin, oldC.xMax, oldC.yMin, oldC.yMax, newC.zMax+1, oldC.zMax, true))
+					s.add(createCuboid(oldC.xMin, oldC.xMax, newC.yMax+1, oldC.yMax, oldC.zMin, newC.zMax, true))
+					delete(s.cleans, oldC.name())
+					s.add(newC)
+					return
+				} else if oldC.b2.in(newC) && oldC.b3.in(newC) {
+					s.add(createCuboid(oldC.xMin, oldC.xMax, oldC.yMin, oldC.yMax, newC.zMax+1, oldC.zMax, true))
+					s.add(createCuboid(newC.xMax+1, newC.xMax, oldC.yMin, oldC.yMax, oldC.zMin, newC.zMax, true))
+					delete(s.cleans, oldC.name())
+					s.add(newC)
+					return
+				} else if oldC.b3.in(newC) && oldC.b4.in(newC) {
+					s.add(createCuboid(oldC.xMin, oldC.xMax, oldC.yMin, oldC.yMax, newC.zMax+1, oldC.zMax, true))
+					s.add(createCuboid(oldC.xMin, oldC.xMax, oldC.yMin, newC.yMin-1, oldC.zMin, newC.zMax, true))
+					delete(s.cleans, oldC.name())
+					s.add(newC)
+					return
+				} else if oldC.b4.in(newC) && oldC.b1.in(newC) {
+					s.add(createCuboid(oldC.xMin, oldC.xMax, oldC.yMin, oldC.yMax, newC.zMax+1, oldC.zMax, true))
+					s.add(createCuboid(oldC.xMin, newC.xMin-1, oldC.yMin, oldC.xMax, oldC.zMin, newC.zMax, true))
+					delete(s.cleans, oldC.name())
+					s.add(newC)
+					return
+				} else if oldC.t1.in(newC) && oldC.t2.in(newC) {
+					s.add(createCuboid(oldC.xMin, oldC.xMax, oldC.yMin, oldC.yMax, oldC.zMin, newC.zMin-1, true))
+					s.add(createCuboid(oldC.xMin, oldC.xMax, newC.yMax+1, oldC.yMax, newC.zMin, oldC.zMax, true))
+					delete(s.cleans, oldC.name())
+					s.add(newC)
+					return
+				} else if oldC.t2.in(newC) && oldC.t3.in(newC) {
+					s.add(createCuboid(oldC.xMin, oldC.xMax, oldC.yMin, oldC.yMax, oldC.zMin, newC.zMin-1, true))
+					s.add(createCuboid(newC.xMax+1, oldC.xMax, oldC.yMin, oldC.yMax, newC.zMin, oldC.zMax, true))
+					delete(s.cleans, oldC.name())
+					s.add(newC)
+					return
+				} else if oldC.t3.in(newC) && oldC.t4.in(newC) {
+					s.add(createCuboid(oldC.xMin, oldC.xMax, oldC.yMin, oldC.yMax, oldC.zMin, newC.zMin-1, true))
+					s.add(createCuboid(oldC.xMin, oldC.xMax, oldC.yMin, newC.yMin-1, newC.zMin, oldC.zMax, true))
+					delete(s.cleans, oldC.name())
+					s.add(newC)
+					return
+				} else if oldC.t4.in(newC) && oldC.t1.in(newC) {
+					s.add(createCuboid(oldC.xMin, oldC.xMax, oldC.yMin, oldC.yMax, oldC.zMin, newC.zMin-1, true))
+					s.add(createCuboid(oldC.xMin, newC.xMin-1, oldC.yMin, oldC.yMax, newC.zMin, oldC.zMax, true))
+					delete(s.cleans, oldC.name())
+					s.add(newC)
+					return
+				}
+			case 4:
+				if oldC.b1.in(newC) && oldC.b2.in(newC) && oldC.t1.in(newC) && oldC.t2.in(newC) {
+					s.add(createCuboid(oldC.xMin, oldC.xMax, newC.yMax+1, oldC.yMax, oldC.zMin, oldC.zMax, true))
+					delete(s.cleans, oldC.name())
+					s.add(newC)
+					return
+				} else if oldC.b2.in(newC) && oldC.t2.in(newC) && oldC.b3.in(newC) && oldC.t3.in(newC) {
+					s.add(createCuboid(newC.xMax+1, oldC.xMax, oldC.yMin, oldC.yMax, oldC.zMin, oldC.zMax, true))
+					delete(s.cleans, oldC.name())
+					s.add(newC)
+					return
+				} else if oldC.b4.in(newC) && oldC.t4.in(newC) && oldC.b3.in(newC) && oldC.t3.in(newC) {
+					s.add(createCuboid(oldC.xMin, oldC.xMax, oldC.yMin, newC.yMin-1, oldC.zMin, oldC.zMax, true))
+					delete(s.cleans, oldC.name())
+					s.add(newC)
+					return
+				} else if oldC.b4.in(newC) && oldC.t4.in(newC) && oldC.b1.in(newC) && oldC.t1.in(newC) {
+					s.add(createCuboid(oldC.xMin, newC.xMin-1, oldC.yMin, oldC.yMax, oldC.zMin, oldC.zMax, true))
+					delete(s.cleans, oldC.name())
+					s.add(newC)
+					return
+				} else if oldC.b1.in(newC) && oldC.b2.in(newC) && oldC.b3.in(newC) && oldC.b4.in(newC) {
+					s.add(createCuboid(oldC.xMin, newC.xMax, oldC.yMin, oldC.yMax, newC.zMax+1, oldC.zMax, true))
+					delete(s.cleans, oldC.name())
+					s.add(newC)
+					return
+				} else if oldC.t1.in(newC) && oldC.t2.in(newC) && oldC.t3.in(newC) && oldC.t4.in(newC) {
+					s.add(createCuboid(oldC.xMin, newC.xMax, oldC.yMin, oldC.yMax, oldC.zMin, newC.zMin-1, true))
+					delete(s.cleans, oldC.name())
+					s.add(newC)
+					return
+				}
+			}
 		}
 
 		// deal with oldC in newC totally
@@ -200,7 +306,7 @@ func createCuboid(xMin, xMax, yMin, yMax, zMin, zMax int, isFull bool) *aocCuboi
 		aocPoint{xMin, yMin, zMax},
 		aocPoint{xMin, yMax, zMax},
 		aocPoint{xMin, yMax, zMax},
-		aocPoint{xMin, yMax, zMax},
+		aocPoint{xMin, yMax, zMin},
 		aocPoint{xMin, yMin, zMin},
 		aocPoint{xMin, yMax, zMin},
 		aocPoint{xMax, yMax, zMin}}
@@ -229,7 +335,7 @@ func (c *aocCuboid) contains(otherC *aocCuboid) bool {
 		otherC.zMin >= c.zMin && otherC.zMax <= c.zMax
 }
 func (c *aocCuboid) getVolume() int {
-	return (c.xMax - c.xMin) * (c.yMax - c.yMin) * (c.zMax - c.zMin)
+	return (c.xMax - c.xMin + 1) * (c.yMax - c.yMin + 1) * (c.zMax - c.zMin + 1)
 }
 
 func (c *aocCuboid) name() string {
