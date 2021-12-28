@@ -49,6 +49,8 @@ func (s *aocSpace) getVolume() int {
 }
 
 func (s *aocSpace) add(xMin, xMax, yMin, yMax, zMin, zMax int) {
+	// Note that we add +1 to the max boundary, to simplify volume calculation logic
+	// This is because in the input, a cuboid can have min 10 and max 10, meaning that it ends at 11
 	s.xs = append(s.xs, xMin, xMax+1)
 	s.ys = append(s.ys, yMin, yMax+1)
 	s.zs = append(s.zs, zMin, zMax+1)
