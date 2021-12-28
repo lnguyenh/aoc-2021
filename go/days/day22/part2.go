@@ -17,7 +17,7 @@ type aocBlock struct {
 }
 
 func (b *aocBlock) getVolume() int {
-	return (b.x.max + 1 - b.x.min) * (b.y.max + 1 - b.y.min) * (b.z.max + 1 - b.z.min)
+	return (b.x.max - b.x.min) * (b.y.max - b.y.min) * (b.z.max - b.z.min)
 }
 
 type aocSpace struct {
@@ -25,6 +25,10 @@ type aocSpace struct {
 	xs     []int
 	ys     []int
 	zs     []int
+
+	xMap map[int]int
+	yMap map[int]int
+	zMap map[int]int
 }
 
 func (s *aocSpace) getVolume() int {
@@ -38,27 +42,23 @@ func (s *aocSpace) getVolume() int {
 }
 
 func (s *aocSpace) add(xMin, xMax, yMin, yMax, zMin, zMax int) {
-	s.xs = append(s.xs, xMin, xMax)
-	s.ys = append(s.ys, yMin, yMax)
-	s.zs = append(s.zs, zMin, zMax)
+	s.xs = append(s.xs, xMin, xMax+1)
+	s.ys = append(s.ys, yMin, yMax+1)
+	s.zs = append(s.zs, zMin, zMax+1)
 }
 
 func (s *aocSpace) set(xMin, xMax, yMin, yMax, zMin, zMax int, isFull bool) {
-	for i := 0; i < len(s.xs)-1; i++ {
-		x0, x1 := s.xs[i], s.xs[i+1]
-		for j := 0; j < len(s.ys)-1; j++ {
-			y0, y1 := s.ys[j], s.ys[j+1]
-			for k := 0; k < len(s.zs)-1; k++ {
+	for i := s.xMap[xMin]; i < s.xMap[xMax+1]; i++ {
+		for j := s.yMap[yMin]; j < s.yMap[yMax+1]; j++ {
+			for k := s.zMap[zMin]; k < s.zMap[zMax+1]; k++ {
+				x0, x1 := s.xs[i], s.xs[i+1]
+				y0, y1 := s.ys[j], s.ys[j+1]
 				z0, z1 := s.zs[k], s.zs[k+1]
-
-				if xMin <= x0 && xMax >= x1 && yMin <= y0 && yMax >= y1 && zMin <= z0 && zMax >= z1 {
-					s.blocks[aocBlock{
-						x: aocSlice{x0, x1},
-						y: aocSlice{y0, y1},
-						z: aocSlice{z0, z1},
-					}] = isFull
-				}
-
+				s.blocks[aocBlock{
+					x: aocSlice{x0, x1},
+					y: aocSlice{y0, y1},
+					z: aocSlice{z0, z1},
+				}] = isFull
 			}
 		}
 	}
@@ -71,6 +71,17 @@ func (s *aocSpace) simplify() {
 	sort.Ints(s.xs)
 	sort.Ints(s.ys)
 	sort.Ints(s.zs)
+
+	for i, x := range s.xs {
+		s.xMap[x] = i
+	}
+	for i, y := range s.ys {
+		s.yMap[y] = i
+	}
+	for i, z := range s.zs {
+		s.zMap[z] = i
+	}
+
 }
 
 func (s *aocSpace) initializeGrid() {
@@ -96,6 +107,10 @@ func createSpace() *aocSpace {
 		xs:     make([]int, 0),
 		ys:     make([]int, 0),
 		zs:     make([]int, 0),
+
+		xMap: make(map[int]int),
+		yMap: make(map[int]int),
+		zMap: make(map[int]int),
 	}
 	return &space
 }

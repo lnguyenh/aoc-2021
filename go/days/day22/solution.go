@@ -24,7 +24,7 @@ func doPart2(instructions []string) int {
 		space.add(xs[0], xs[1], ys[0], ys[1], zs[0], zs[1])
 	}
 	space.simplify()
-	space.initializeGrid()
+	// space.initializeGrid()
 	for _, instruction := range instructions {
 		groups := r.FindStringSubmatch(instruction)
 		onOrOff, x0, x1, y0, y1, z0, z1 := groups[1], groups[2], groups[3], groups[4], groups[5], groups[6], groups[7]
