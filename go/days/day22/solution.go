@@ -4,39 +4,21 @@ import (
 	"fmt"
 	"github.com/lnguyenh/aoc-2021/utils"
 	"regexp"
-	"sort"
 )
 
 func doPart2(instructions []string) int {
 	r, _ := regexp.Compile("^(\\w+) x=(-?\\d+)..(-?\\d+),y=(-?\\d+)..(-?\\d+),z=(-?\\d+)..(-?\\d+)$")
-	var space *aocSpace
-	space = createSpace()
-
+	parsedInstructions := make([]aocInstruction, 0, len(instructions))
 	for _, instruction := range instructions {
 		groups := r.FindStringSubmatch(instruction)
-		_, x0, x1, y0, y1, z0, z1 := groups[1], groups[2], groups[3], groups[4], groups[5], groups[6], groups[7]
-		xs := utils.StringSliceToIntSlice([]string{x0, x1})
-		ys := utils.StringSliceToIntSlice([]string{y0, y1})
-		zs := utils.StringSliceToIntSlice([]string{z0, z1})
-		sort.Ints(xs)
-		sort.Ints(ys)
-		sort.Ints(zs)
-		space.add(xs[0], xs[1], ys[0], ys[1], zs[0], zs[1])
+		parsedInstructions = append(parsedInstructions, aocInstruction{
+			isFull:           groups[1] == "on",
+			cuboidBoundaries: utils.StringSliceToIntSlice(groups[2:])})
 	}
+	space := createSpace(parsedInstructions)
+	space.buildAxes()
 	space.simplify()
-	// space.initializeGrid()
-	for _, instruction := range instructions {
-		groups := r.FindStringSubmatch(instruction)
-		onOrOff, x0, x1, y0, y1, z0, z1 := groups[1], groups[2], groups[3], groups[4], groups[5], groups[6], groups[7]
-		xs := utils.StringSliceToIntSlice([]string{x0, x1})
-		ys := utils.StringSliceToIntSlice([]string{y0, y1})
-		zs := utils.StringSliceToIntSlice([]string{z0, z1})
-		sort.Ints(xs)
-		sort.Ints(ys)
-		sort.Ints(zs)
-		space.set(xs[0], xs[1], ys[0], ys[1], zs[0], zs[1], onOrOff == "on")
-	}
-
+	space.applyInstructions()
 	return space.getVolume()
 }
 

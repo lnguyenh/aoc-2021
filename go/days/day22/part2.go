@@ -20,6 +20,11 @@ func (b *aocBlock) getVolume() int {
 	return (b.x.max - b.x.min) * (b.y.max - b.y.min) * (b.z.max - b.z.min)
 }
 
+type aocInstruction struct {
+	isFull           bool
+	cuboidBoundaries []int
+}
+
 type aocSpace struct {
 	blocks map[aocBlock]bool
 	xs     []int
@@ -29,6 +34,8 @@ type aocSpace struct {
 	xMap map[int]int
 	yMap map[int]int
 	zMap map[int]int
+
+	instructions []aocInstruction
 }
 
 func (s *aocSpace) getVolume() int {
@@ -45,6 +52,20 @@ func (s *aocSpace) add(xMin, xMax, yMin, yMax, zMin, zMax int) {
 	s.xs = append(s.xs, xMin, xMax+1)
 	s.ys = append(s.ys, yMin, yMax+1)
 	s.zs = append(s.zs, zMin, zMax+1)
+}
+
+func (s *aocSpace) buildAxes() {
+	for _, instruction := range s.instructions {
+		bounds := instruction.cuboidBoundaries
+		s.add(bounds[0], bounds[1], bounds[2], bounds[3], bounds[4], bounds[5])
+	}
+}
+
+func (s *aocSpace) applyInstructions() {
+	for _, instruction := range s.instructions {
+		bounds := instruction.cuboidBoundaries
+		s.set(bounds[0], bounds[1], bounds[2], bounds[3], bounds[4], bounds[5], instruction.isFull)
+	}
 }
 
 func (s *aocSpace) set(xMin, xMax, yMin, yMax, zMin, zMax int, isFull bool) {
@@ -101,16 +122,16 @@ func (s *aocSpace) initializeGrid() {
 	}
 }
 
-func createSpace() *aocSpace {
+func createSpace(instructions []aocInstruction) *aocSpace {
 	space := aocSpace{
-		blocks: make(map[aocBlock]bool),
-		xs:     make([]int, 0),
-		ys:     make([]int, 0),
-		zs:     make([]int, 0),
-
-		xMap: make(map[int]int),
-		yMap: make(map[int]int),
-		zMap: make(map[int]int),
+		blocks:       make(map[aocBlock]bool),
+		xs:           make([]int, 0),
+		ys:           make([]int, 0),
+		zs:           make([]int, 0),
+		xMap:         make(map[int]int),
+		yMap:         make(map[int]int),
+		zMap:         make(map[int]int),
+		instructions: instructions,
 	}
 	return &space
 }
