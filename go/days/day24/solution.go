@@ -25,20 +25,21 @@ func (alu *aocAlu) reset(input []int) {
 	alu.input = input
 }
 
-func (alu *aocAlu) isValid(input []int) bool {
+// isValid, isError
+func (alu *aocAlu) isValid(input []int) (bool, bool, bool) {
 	if utils.IntInSlice(0, input) {
-		return false
+		return false, false, true
 	}
 	alu.reset(input)
 	for _, line := range alu.program {
 		if !alu.doInstruction(strings.Split(line, " ")) {
-			return false
+			return false, true, false
 		}
 	}
-	return alu.z == 0
+	return alu.z == 0, false, false
 }
 
-func (alu *aocAlu) isValidInt(input int) bool {
+func (alu *aocAlu) isValidInt(input int) (bool, bool, bool) {
 	asIntSlice := make([]int, 0, 14)
 	asString := fmt.Sprintf("%v", input)
 	asRuneSlice := []rune(asString)
@@ -106,12 +107,14 @@ func (alu *aocAlu) doInstruction(instruction []string) bool {
 	case "div":
 		b := alu.getValue(instruction[2])
 		if b == 0 {
-			panic("division by zero")
+			// fmt.Printf("division by zero\n")
+			panic("division by zero\n")
 		}
 		alu.save(variable, a/b)
 	case "mod":
 		b := alu.getValue(instruction[2])
 		if a < 0 || b <= 0 {
+			// fmt.Printf("modulo error")
 			panic("modulo error")
 		}
 		alu.save(variable, a%b)
@@ -131,13 +134,22 @@ func (alu *aocAlu) doInstruction(instruction []string) bool {
 func doPart1(program []string) int {
 	// base := []int{9, 8, 7, 6, 5, 4, 3, 2, 1}
 	alu := aocAlu{program: program}
-	number := 99999999999999
+	number := 13579246899999
 	for {
-		if alu.isValidInt(number) {
+		isValid, isError, hasZeroes := alu.isValidInt(number)
+		if !isError {
+			//fmt.Printf("error for %v", number)
+		}
+		if isValid || number < 0 {
 			break
+		}
+		if !hasZeroes && alu.z < 1000 {
+			fmt.Printf("%v: z is %v\n", number, alu.z)
 		}
 		number -= 1
 	}
+
+	// alu.isValid([]int{4})
 	return number
 }
 
