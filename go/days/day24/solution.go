@@ -17,6 +17,6 @@ func doPart2() int {
 func Run(path string) {
 	answer1 := doPart1()
 	answer2 := doPart2()
-	fmt.Printf("Part 1 answer (purely found on a whiteboard by analyzing the input): %v\n", answer1)
-	fmt.Printf("Part 2 answer (purely found on a whiteboard by analyzing the input): %v\n", answer2)
+	fmt.Printf("Part 1 (purely found on a whiteboard. See png screenshot whiteboard.png): %v\n", answer1)
+	fmt.Printf("Part 2 (purely found on a whiteboard. See png screenshot whiteboard.png): %v\n", answer2)
 }

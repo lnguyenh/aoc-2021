@@ -26,6 +26,7 @@ import (
 	"github.com/lnguyenh/aoc-2021/days/day22"
 	"github.com/lnguyenh/aoc-2021/days/day23"
 	"github.com/lnguyenh/aoc-2021/days/day24"
+	"github.com/lnguyenh/aoc-2021/days/day25"
 	"time"
 )
 
@@ -59,6 +60,7 @@ func Run(day string, path string) {
 		"22": day22.Run,
 		"23": day23.Run,
 		"24": day24.Run,
+		"25": day25.Run,
 	}
 	dayFunction, found := dayFunctions[day]
 	if found {
