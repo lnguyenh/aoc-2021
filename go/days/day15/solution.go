@@ -10,7 +10,7 @@ type locationPoint struct {
 	x          int
 	y          int
 	neighbours []string
-	minToEnd   *int
+	minToEnd   int
 }
 
 func getKey(x, y int) string {
@@ -19,13 +19,12 @@ func getKey(x, y int) string {
 
 func createLocation(risk, x, y int) *locationPoint {
 	neighbours := make([]string, 0, 4)
-	minToEnd := -1
 	return &locationPoint{
 		risk:       risk,
 		x:          x,
 		y:          y,
 		neighbours: neighbours,
-		minToEnd:   &minToEnd,
+		minToEnd:   -1,
 	}
 }
 
@@ -66,7 +65,7 @@ func buildLocations(locations [][]int, multiplicator int) map[string]*locationPo
 		}
 	}
 	minToEnd := points[getKey(length-1, width-1)].risk
-	points[getKey(length-1, width-1)].minToEnd = &minToEnd
+	points[getKey(length-1, width-1)].minToEnd = minToEnd
 	return points
 }
 
@@ -80,10 +79,10 @@ func populateMinRisk(points *map[string]*locationPoint) {
 		for _, pointP := range *points {
 			for _, neighbourKey := range pointP.neighbours {
 				neighbourP := (*points)[neighbourKey]
-				if *neighbourP.minToEnd > 0 {
-					minToEndCandidate := pointP.risk + *neighbourP.minToEnd
-					if *pointP.minToEnd > minToEndCandidate || *pointP.minToEnd < 0 {
-						pointP.minToEnd = &minToEndCandidate
+				if neighbourP.minToEnd > 0 {
+					minToEndCandidate := pointP.risk + neighbourP.minToEnd
+					if pointP.minToEnd > minToEndCandidate || pointP.minToEnd < 0 {
+						pointP.minToEnd = minToEndCandidate
 						numPopulated++
 					}
 				}
@@ -110,15 +109,15 @@ func printGrid(points map[string]*locationPoint) {
 func getMinRisk(points map[string]*locationPoint) int {
 	populateMinRisk(&points)
 	startPoint := points[getKey(0, 0)]
-	return *startPoint.minToEnd - startPoint.risk
+	return startPoint.minToEnd - startPoint.risk
 }
 
 func Run(path string) {
 	input := utils.ReadFileAsSliceOfDigitIntSlices(path)
 	points := buildLocations(input, 1)
-	points2 := buildLocations(input, 5)
+	//points2 := buildLocations(input, 5)
 	answer1 := getMinRisk(points)
-	answer2 := getMinRisk(points2)
+	//answer2 := getMinRisk(points2)
 	fmt.Printf("Part 1 answer: %v\n", answer1)
-	fmt.Printf("Part 2 answer: %v\n", answer2)
+	//fmt.Printf("Part 2 answer: %v\n", answer2)
 }
