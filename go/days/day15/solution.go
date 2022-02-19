@@ -17,7 +17,7 @@ func getKey(x, y int) string {
 	return fmt.Sprintf("%v-%v", x, y)
 }
 
-func createLocation(risk, x, y int) *locationPoint {
+func createPoint(risk, x, y int) *locationPoint {
 	neighbours := make([]string, 0, 4)
 	return &locationPoint{
 		risk:       risk,
@@ -28,7 +28,7 @@ func createLocation(risk, x, y int) *locationPoint {
 	}
 }
 
-func buildLocations(rawInput [][]int, multiplicator int) map[string]*locationPoint {
+func buildPoints(rawInput [][]int, multiplicator int) map[string]*locationPoint {
 	points := make(map[string]*locationPoint)
 	baseLength := len(rawInput)
 	baseWidth := len(rawInput[0])
@@ -51,7 +51,7 @@ func buildLocations(rawInput [][]int, multiplicator int) map[string]*locationPoi
 					}
 
 					key := getKey(x, y)
-					points[key] = createLocation(risk, x, y)
+					points[key] = createPoint(risk, x, y)
 
 					potentialNeighbours := [4][2]int{{x - 1, y}, {x + 1, y}, {x, y - 1}, {x, y + 1}}
 					for _, potentialNeighbour := range potentialNeighbours {
@@ -78,13 +78,13 @@ func populateMinRisk(points *map[string]*locationPoint) {
 			break
 		}
 		numPopulated = 0
-		for _, pointP := range *points {
-			for _, neighbourKey := range pointP.neighbours {
-				neighbourP := (*points)[neighbourKey]
-				if neighbourP.minToEnd > 0 {
-					minToEndCandidate := pointP.risk + neighbourP.minToEnd
-					if pointP.minToEnd > minToEndCandidate || pointP.minToEnd < 0 {
-						pointP.minToEnd = minToEndCandidate
+		for _, point := range *points {
+			for _, neighbourKey := range point.neighbours {
+				neighbour := (*points)[neighbourKey]
+				if neighbour.minToEnd > 0 {
+					minToEndCandidate := point.risk + neighbour.minToEnd
+					if point.minToEnd > minToEndCandidate || point.minToEnd < 0 {
+						point.minToEnd = minToEndCandidate
 						numPopulated++
 					}
 				}
@@ -115,7 +115,7 @@ func getMinRisk(points map[string]*locationPoint) int {
 }
 
 func getSolution(rawInput [][]int, multiplicator int) int {
-	points := buildLocations(rawInput, multiplicator)
+	points := buildPoints(rawInput, multiplicator)
 	return getMinRisk(points)
 }
 
