@@ -28,21 +28,21 @@ func createLocation(risk, x, y int) *locationPoint {
 	}
 }
 
-func buildLocations(locations [][]int, multiplicator int) map[string]*locationPoint {
+func buildLocations(rawInput [][]int, multiplicator int) map[string]*locationPoint {
 	points := make(map[string]*locationPoint)
-	miniLength := len(locations)
-	miniWidth := len(locations[0])
-	length := miniLength * multiplicator
-	width := miniWidth * multiplicator
+	baseLength := len(rawInput)
+	baseWidth := len(rawInput[0])
+	length := baseLength * multiplicator
+	width := baseWidth * multiplicator
 
 	for i := 0; i < multiplicator; i++ {
 		for j := 0; j < multiplicator; j++ {
-			for Y, row := range locations {
+			for Y, row := range rawInput {
 				for X := range row {
-					x := X + (miniWidth * j)
-					y := Y + (miniLength * i)
+					x := X + (baseWidth * j)
+					y := Y + (baseLength * i)
 
-					risk := locations[Y][X]
+					risk := rawInput[Y][X]
 					for z := 0; z < (i + j); z++ {
 						risk = risk + 1
 						if risk == 10 {
@@ -64,6 +64,8 @@ func buildLocations(locations [][]int, multiplicator int) map[string]*locationPo
 			}
 		}
 	}
+
+	// Set the only known minToEnd: the last point
 	minToEnd := points[getKey(length-1, width-1)].risk
 	points[getKey(length-1, width-1)].minToEnd = minToEnd
 	return points
@@ -112,12 +114,15 @@ func getMinRisk(points map[string]*locationPoint) int {
 	return startPoint.minToEnd - startPoint.risk
 }
 
+func getSolution(rawInput [][]int, multiplicator int) int {
+	points := buildLocations(rawInput, multiplicator)
+	return getMinRisk(points)
+}
+
 func Run(path string) {
 	input := utils.ReadFileAsSliceOfDigitIntSlices(path)
-	points := buildLocations(input, 1)
-	//points2 := buildLocations(input, 5)
-	answer1 := getMinRisk(points)
-	//answer2 := getMinRisk(points2)
+	answer1 := getSolution(input, 1)
+	// answer2 := getSolution(input, 5)
 	fmt.Printf("Part 1 answer: %v\n", answer1)
 	//fmt.Printf("Part 2 answer: %v\n", answer2)
 }
