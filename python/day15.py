@@ -15,7 +15,6 @@ class Graph:
             for y, line in enumerate(risks)
             for x, risk in enumerate(line)
         }
-        self.nodes = self.risks.keys()
 
     @staticmethod
     def get_neighbours(node_name):
@@ -23,9 +22,9 @@ class Graph:
         return [f"{x-1}-{y}", f"{x+1}-{y}", f"{x}-{y-1}", f"{x}-{y+1}"]
 
     def get_min_risk(self):
-        visited = {}
         start_node = f"0-0"
         stop_node = f"{self.width-1}-{self.length-1}"
+        visited = {}
         min_heap = [(0, start_node)]
         while True:
             current_risk, current_node = heapq.heappop(min_heap)
@@ -54,4 +53,4 @@ if __name__ == "__main__":
     input_risks = load_input()
     graph = Graph(input_risks)
     solution = graph.get_min_risk()
-    print("toto", solution)
+    print("solution:", solution)
