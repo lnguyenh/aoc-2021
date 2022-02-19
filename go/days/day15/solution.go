@@ -4,17 +4,14 @@ import (
 	"container/heap"
 	"fmt"
 	"github.com/lnguyenh/aoc-2021/utils"
-	"math"
 )
-
-var maxValue = math.MaxUint32
 
 type locationPoint struct {
 	risk       int
 	x          int
 	y          int
 	neighbours []string
-	minToEnd   int
+	minToEnd   int // TODO Legacy remove
 }
 
 func getNodeName(x, y int) string {
@@ -28,7 +25,6 @@ func createPoint(risk, x, y int) *locationPoint {
 		x:          x,
 		y:          y,
 		neighbours: neighbours,
-		minToEnd:   maxValue,
 	}
 }
 
@@ -68,111 +64,16 @@ func buildPoints(rawInput [][]int, multiplicator int) (map[string]*locationPoint
 			}
 		}
 	}
-
-	// Set the only known minToEnd: the last point
-	endPointKey := getNodeName(length-1, width-1)
-	points[endPointKey].minToEnd = points[endPointKey].risk
 	return points, length, width
-}
-
-func populateMinRisk(points *map[string]*locationPoint) {
-	numPopulated := -1
-	for {
-		if numPopulated == 0 {
-			break
-		}
-		numPopulated = 0
-		for _, point := range *points {
-			for _, neighbourKey := range point.neighbours {
-				neighbour := (*points)[neighbourKey]
-				if neighbour.minToEnd != maxValue {
-					minToEndCandidate := point.risk + neighbour.minToEnd
-					if point.minToEnd > minToEndCandidate {
-						point.minToEnd = minToEndCandidate
-						numPopulated++
-					}
-				}
-			}
-		}
-	}
-}
-
-func printGrid(points map[string]*locationPoint) {
-	widthAndLength := 0
-	for _, point := range points {
-		if point.x > widthAndLength {
-			widthAndLength = point.x
-		}
-	}
-	for i := 0; i < widthAndLength; i++ {
-		for j := 0; j < widthAndLength; j++ {
-			fmt.Printf("%v ", points[getNodeName(j, i)].risk)
-		}
-		fmt.Printf("\n")
-	}
-}
-
-func getMinRisk(points map[string]*locationPoint) int {
-	populateMinRisk(&points)
-	startPoint := points[getNodeName(0, 0)]
-	return startPoint.minToEnd - startPoint.risk
-}
-
-func runDjikstra(points map[string]*locationPoint, startNode, stopNode string) int {
-	unvisitedNodes := make(map[string]bool)
-	for node := range points {
-		unvisitedNodes[node] = true
-	}
-
-	shortestPath := make(map[string]int)
-	for node := range points {
-		shortestPath[node] = maxValue
-	}
-	shortestPath[startNode] = 0
-
-	previousNodes := make(map[string]string)
-
-	for {
-		if len(unvisitedNodes) == 0 {
-			break
-		}
-
-		// Find node with lowest value
-		currentMinNode := ""
-		for node := range unvisitedNodes {
-			if currentMinNode == "" {
-				currentMinNode = node
-			} else if shortestPath[node] < shortestPath[currentMinNode] {
-				currentMinNode = node
-			}
-		}
-
-		for _, neighbour := range points[currentMinNode].neighbours {
-			tentativeValue := shortestPath[currentMinNode] + points[neighbour].risk
-			if tentativeValue < shortestPath[neighbour] {
-				shortestPath[neighbour] = tentativeValue
-				previousNodes[neighbour] = currentMinNode
-			}
-		}
-
-		if currentMinNode == stopNode {
-			break
-		}
-
-		delete(unvisitedNodes, currentMinNode)
-	}
-
-	return shortestPath[stopNode]
 }
 
 func runDjikstraHeap(points map[string]*locationPoint, startNode, stopNode string) int {
 	visitedNodes := make(map[string]bool)
 
-	// used to store the "active" minimum distance from start node
+	// used to store the "active" minimum distances from start node
 	minHeap := aocHeap{heapNode{startNode, 0}}
 
 	for {
-
 		currentMinNode := heap.Pop(&minHeap).(heapNode)
 
 		if visitedNodes[currentMinNode.name] {
@@ -194,28 +95,18 @@ func runDjikstraHeap(points map[string]*locationPoint, startNode, stopNode strin
 	}
 }
 
-func getMinRiskDjikstra(points map[string]*locationPoint, length int, width int) int {
-	return runDjikstraHeap(points, getNodeName(0, 0), getNodeName(length-1, width-1))
-}
-
-func getSolution(rawInput [][]int, multiplicator int, doPrintGrid bool, useDjikstra bool) int {
+func getSolution(rawInput [][]int, multiplicator int, doPrintGrid bool) int {
 	points, length, width := buildPoints(rawInput, multiplicator)
 	if doPrintGrid {
 		printGrid(points)
 	}
-	if useDjikstra {
-		return getMinRiskDjikstra(points, length, width)
-	} else {
-		return getMinRisk(points)
-	}
+	return runDjikstraHeap(points, getNodeName(0, 0), getNodeName(length-1, width-1))
 }
 
 func Run(path string) {
 	input := utils.ReadFileAsSliceOfDigitIntSlices(path)
-	useDjikstra := true
-	doPrintGrid := false
-	answer1 := getSolution(input, 1, doPrintGrid, useDjikstra)
+	answer1 := getSolution(input, 1, false)
 	fmt.Printf("Part 1 answer: %v\n", answer1)
-	answer2 := getSolution(input, 5, doPrintGrid, useDjikstra)
+	answer2 := getSolution(input, 5, false)
 	fmt.Printf("Part 2 answer: %v\n", answer2)
 }
