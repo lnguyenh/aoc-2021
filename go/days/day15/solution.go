@@ -11,7 +11,7 @@ type locationPoint struct {
 	x          int
 	y          int
 	neighbours []string
-	minToEnd   int // TODO Legacy remove
+	minToEnd   int // TODO: remove this legacy field when not needed for demo anymore
 }
 
 func getNodeName(x, y int) string {
