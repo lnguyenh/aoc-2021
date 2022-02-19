@@ -3,7 +3,10 @@ package day15
 import (
 	"fmt"
 	"github.com/lnguyenh/aoc-2021/utils"
+	"math"
 )
+
+var maxValue = math.MaxUint32
 
 type locationPoint struct {
 	risk       int
@@ -24,11 +27,11 @@ func createPoint(risk, x, y int) *locationPoint {
 		x:          x,
 		y:          y,
 		neighbours: neighbours,
-		minToEnd:   -1,
+		minToEnd:   maxValue,
 	}
 }
 
-func buildPoints(rawInput [][]int, multiplicator int) map[string]*locationPoint {
+func buildPoints(rawInput [][]int, multiplicator int) (map[string]*locationPoint, int, int) {
 	points := make(map[string]*locationPoint)
 	baseLength := len(rawInput)
 	baseWidth := len(rawInput[0])
@@ -66,9 +69,9 @@ func buildPoints(rawInput [][]int, multiplicator int) map[string]*locationPoint 
 	}
 
 	// Set the only known minToEnd: the last point
-	minToEnd := points[getKey(length-1, width-1)].risk
-	points[getKey(length-1, width-1)].minToEnd = minToEnd
-	return points
+	endPointKey := getKey(length-1, width-1)
+	points[endPointKey].minToEnd = points[endPointKey].risk
+	return points, length, width
 }
 
 func populateMinRisk(points *map[string]*locationPoint) {
@@ -81,9 +84,9 @@ func populateMinRisk(points *map[string]*locationPoint) {
 		for _, point := range *points {
 			for _, neighbourKey := range point.neighbours {
 				neighbour := (*points)[neighbourKey]
-				if neighbour.minToEnd > 0 {
+				if neighbour.minToEnd != maxValue {
 					minToEndCandidate := point.risk + neighbour.minToEnd
-					if point.minToEnd > minToEndCandidate || point.minToEnd < 0 {
+					if point.minToEnd > minToEndCandidate {
 						point.minToEnd = minToEndCandidate
 						numPopulated++
 					}
@@ -114,15 +117,72 @@ func getMinRisk(points map[string]*locationPoint) int {
 	return startPoint.minToEnd - startPoint.risk
 }
 
-func getSolution(rawInput [][]int, multiplicator int) int {
-	points := buildPoints(rawInput, multiplicator)
-	return getMinRisk(points)
+func runDjikstra(points map[string]*locationPoint, startNode string) (map[string]string, map[string]int) {
+	unvisitedNodes := make(map[string]bool)
+	for node := range points {
+		unvisitedNodes[node] = true
+	}
+
+	shortestPath := make(map[string]int)
+	for node := range points {
+		shortestPath[node] = maxValue
+	}
+	shortestPath[startNode] = 0
+
+	previousNodes := make(map[string]string)
+
+	for {
+		if len(unvisitedNodes) == 0 {
+			break
+		}
+
+		// Find node with lowest value
+		currentMinNode := ""
+		for node := range unvisitedNodes {
+			if currentMinNode == "" {
+				currentMinNode = node
+			} else if shortestPath[node] < shortestPath[currentMinNode] {
+				currentMinNode = node
+			}
+		}
+
+		for _, neighbour := range points[currentMinNode].neighbours {
+			tentativeValue := shortestPath[currentMinNode] + points[neighbour].risk
+			if tentativeValue < shortestPath[neighbour] {
+				shortestPath[neighbour] = tentativeValue
+				previousNodes[neighbour] = currentMinNode
+			}
+		}
+
+		delete(unvisitedNodes, currentMinNode)
+	}
+
+	return previousNodes, shortestPath
+}
+
+func getMinRiskDjikstra(points map[string]*locationPoint, length int, width int) int {
+	_, shortestPath := runDjikstra(points, getKey(0, 0))
+	return shortestPath[getKey(length-1, width-1)]
+}
+
+func getSolution(rawInput [][]int, multiplicator int, doPrintGrid bool, useDjikstra bool) int {
+	points, length, width := buildPoints(rawInput, multiplicator)
+	if doPrintGrid {
+		printGrid(points)
+	}
+	if useDjikstra {
+		return getMinRiskDjikstra(points, length, width)
+	} else {
+		return getMinRisk(points)
+	}
 }
 
 func Run(path string) {
 	input := utils.ReadFileAsSliceOfDigitIntSlices(path)
-	answer1 := getSolution(input, 1)
-	// answer2 := getSolution(input, 5)
+	useDjikstra := false
+	doPrintGrid := false
+	answer1 := getSolution(input, 1, doPrintGrid, useDjikstra)
+	answer2 := getSolution(input, 5, doPrintGrid, useDjikstra)
 	fmt.Printf("Part 1 answer: %v\n", answer1)
-	//fmt.Printf("Part 2 answer: %v\n", answer2)
+	fmt.Printf("Part 2 answer: %v\n", answer2)
 }
