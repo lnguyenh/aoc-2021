@@ -5,16 +5,19 @@ import (
 	"math"
 )
 
+// TODO remove this file once demo-ed
+
 var maxValue = math.MaxUint32
 
-func populateMinRisk(points *map[string]*locationPoint, length, width int) {
+// Original solution using bruteforce "contagion"
+func populateMinRisk(nodes *map[string]*locationNode, length, width int) {
 	// Initialize minToEnd
-	for _, point := range *points {
-		point.minToEnd = maxValue
+	for _, node := range *nodes {
+		node.minToEnd = maxValue
 	}
-	// Set the only known minToEnd: the last point
-	endPointKey := getNodeName(length-1, width-1)
-	(*points)[endPointKey].minToEnd = (*points)[endPointKey].risk
+	// Set the only known minToEnd: the last node
+	endNodeKey := getNodeName(length-1, width-1)
+	(*nodes)[endNodeKey].minToEnd = (*nodes)[endNodeKey].risk
 
 	numPopulated := -1
 	for {
@@ -22,13 +25,13 @@ func populateMinRisk(points *map[string]*locationPoint, length, width int) {
 			break
 		}
 		numPopulated = 0
-		for _, point := range *points {
-			for _, neighbourKey := range point.neighbours {
-				neighbour := (*points)[neighbourKey]
+		for _, node := range *nodes {
+			for _, neighbourKey := range node.neighbours {
+				neighbour := (*nodes)[neighbourKey]
 				if neighbour.minToEnd != maxValue {
-					minToEndCandidate := point.risk + neighbour.minToEnd
-					if point.minToEnd > minToEndCandidate {
-						point.minToEnd = minToEndCandidate
+					minToEndCandidate := node.risk + neighbour.minToEnd
+					if node.minToEnd > minToEndCandidate {
+						node.minToEnd = minToEndCandidate
 						numPopulated++
 					}
 				}
@@ -37,20 +40,21 @@ func populateMinRisk(points *map[string]*locationPoint, length, width int) {
 	}
 }
 
-func getMinRisk(points map[string]*locationPoint, length, width int) int {
-	populateMinRisk(&points, length, width)
-	startPoint := points[getNodeName(0, 0)]
-	return startPoint.minToEnd - startPoint.risk
+func getMinRisk(nodes map[string]*locationNode, length, width int) int {
+	populateMinRisk(&nodes, length, width)
+	startNode := nodes[getNodeName(0, 0)]
+	return startNode.minToEnd - startNode.risk
 }
 
-func runDjikstra(points map[string]*locationPoint, startNode, stopNode string) int {
+// First version of Djikstra, unoptimized
+func runDjikstra(nodes map[string]*locationNode, startNode, stopNode string) int {
 	unvisitedNodes := make(map[string]bool)
-	for node := range points {
+	for node := range nodes {
 		unvisitedNodes[node] = true
 	}
 
 	shortestPath := make(map[string]int)
-	for node := range points {
+	for node := range nodes {
 		shortestPath[node] = maxValue
 	}
 	shortestPath[startNode] = 0
@@ -72,8 +76,8 @@ func runDjikstra(points map[string]*locationPoint, startNode, stopNode string) i
 			}
 		}
 
-		for _, neighbour := range points[currentMinNode].neighbours {
-			tentativeValue := shortestPath[currentMinNode] + points[neighbour].risk
+		for _, neighbour := range nodes[currentMinNode].neighbours {
+			tentativeValue := shortestPath[currentMinNode] + nodes[neighbour].risk
 			if tentativeValue < shortestPath[neighbour] {
 				shortestPath[neighbour] = tentativeValue
 				previousNodes[neighbour] = currentMinNode
@@ -90,16 +94,16 @@ func runDjikstra(points map[string]*locationPoint, startNode, stopNode string) i
 	return shortestPath[stopNode]
 }
 
-func printGrid(points map[string]*locationPoint) {
+func printGrid(nodes map[string]*locationNode) {
 	widthAndLength := 0
-	for _, point := range points {
-		if point.x > widthAndLength {
-			widthAndLength = point.x
+	for _, node := range nodes {
+		if node.x > widthAndLength {
+			widthAndLength = node.x
 		}
 	}
 	for i := 0; i < widthAndLength; i++ {
 		for j := 0; j < widthAndLength; j++ {
-			fmt.Printf("%v ", points[getNodeName(j, i)].risk)
+			fmt.Printf("%v ", nodes[getNodeName(j, i)].risk)
 		}
 		fmt.Printf("\n")
 	}

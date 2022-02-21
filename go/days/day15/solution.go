@@ -6,7 +6,7 @@ import (
 	"github.com/lnguyenh/aoc-2021/utils"
 )
 
-type locationPoint struct {
+type locationNode struct {
 	risk       int
 	x          int
 	y          int
@@ -18,9 +18,9 @@ func getNodeName(x, y int) string {
 	return fmt.Sprintf("%v-%v", x, y)
 }
 
-func createPoint(risk, x, y int) *locationPoint {
+func createNode(risk, x, y int) *locationNode {
 	neighbours := make([]string, 0, 4)
-	return &locationPoint{
+	return &locationNode{
 		risk:       risk,
 		x:          x,
 		y:          y,
@@ -28,8 +28,8 @@ func createPoint(risk, x, y int) *locationPoint {
 	}
 }
 
-func buildPoints(rawInput [][]int, multiplicator int) (map[string]*locationPoint, int, int) {
-	points := make(map[string]*locationPoint)
+func createNodes(rawInput [][]int, multiplicator int) (map[string]*locationNode, int, int) {
+	nodes := make(map[string]*locationNode)
 	baseLength := len(rawInput)
 	baseWidth := len(rawInput[0])
 	length := baseLength * multiplicator
@@ -51,23 +51,23 @@ func buildPoints(rawInput [][]int, multiplicator int) (map[string]*locationPoint
 					}
 
 					key := getNodeName(x, y)
-					points[key] = createPoint(risk, x, y)
+					nodes[key] = createNode(risk, x, y)
 
 					potentialNeighbours := [4][2]int{{x - 1, y}, {x + 1, y}, {x, y - 1}, {x, y + 1}}
 					for _, potentialNeighbour := range potentialNeighbours {
 						x0, y0 := potentialNeighbour[0], potentialNeighbour[1]
 						if x0 >= 0 && x0 <= width-1 && y0 >= 0 && y0 <= length-1 {
-							points[key].neighbours = append(points[key].neighbours, getNodeName(x0, y0))
+							nodes[key].neighbours = append(nodes[key].neighbours, getNodeName(x0, y0))
 						}
 					}
 				}
 			}
 		}
 	}
-	return points, length, width
+	return nodes, length, width
 }
 
-func runDjikstraHeap(points map[string]*locationPoint, startNode, stopNode string) int {
+func runDjikstraHeap(nodes map[string]*locationNode, startNode, stopNode string) int {
 	visitedNodes := make(map[string]bool)
 
 	// used to store the "active" minimum distances from start node
@@ -84,9 +84,9 @@ func runDjikstraHeap(points map[string]*locationPoint, startNode, stopNode strin
 			return currentMinNode.totalRisk
 		}
 
-		for _, neighbourName := range points[currentMinNode.name].neighbours {
+		for _, neighbourName := range nodes[currentMinNode.name].neighbours {
 			if !visitedNodes[neighbourName] {
-				neighbourTotalRisk := currentMinNode.totalRisk + points[neighbourName].risk
+				neighbourTotalRisk := currentMinNode.totalRisk + nodes[neighbourName].risk
 				heap.Push(&minHeap, heapNode{name: neighbourName, totalRisk: neighbourTotalRisk})
 			}
 		}
@@ -96,11 +96,11 @@ func runDjikstraHeap(points map[string]*locationPoint, startNode, stopNode strin
 }
 
 func getSolution(rawInput [][]int, multiplicator int, doPrintGrid bool) int {
-	points, length, width := buildPoints(rawInput, multiplicator)
+	nodes, length, width := createNodes(rawInput, multiplicator)
 	if doPrintGrid {
-		printGrid(points)
+		printGrid(nodes)
 	}
-	return runDjikstraHeap(points, getNodeName(0, 0), getNodeName(length-1, width-1))
+	return runDjikstraHeap(nodes, getNodeName(0, 0), getNodeName(length-1, width-1))
 }
 
 func Run(path string) {
